@@ -1,8 +1,23 @@
 import { useState } from "react";
+import {
+  IconLayoutDashboard,
+  IconCheckbox,
+  IconCalendar,
+} from "@tabler/icons-react";
+
+// 메뉴관리
+const menus = [
+  {
+    id: "dashboard",
+    label: "대시보드",
+    icon: <IconLayoutDashboard size={20} />,
+  },
+  { id: "tasks", label: "할 일 관리", icon: <IconCheckbox size={20} /> },
+  { id: "calendar", label: "캘린더", icon: <IconCalendar size={20} /> },
+];
 
 export default function App() {
   const [currentMenu, setCurrentMenu] = useState("dashboard");
-
   // 1. 사이드바 열림/닫힘 상태 추가 (기본값: 열림)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -38,26 +53,22 @@ export default function App() {
           </div>
 
           {/* 메뉴 리스트 */}
-          <nav className="space-y-1">
+          {menus.map((menu) => (
             <button
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-indigo-50 text-indigo-600 font-medium text-sm transition-all ${isSidebarOpen ? "" : "justify-center"}`}
+              key={menu.id}
+              onClick={() => setCurrentMenu(menu.id)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+      ${isSidebarOpen ? "" : "justify-center"}
+      ${
+        currentMenu === menu.id
+          ? "bg-indigo-50 text-indigo-600"
+          : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+      }`}
             >
-              <span className="text-lg">📊</span>
-              {isSidebarOpen && <span>대시보드</span>}
+              {menu.icon}
+              {isSidebarOpen && <span>{menu.label}</span>}
             </button>
-            <button
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-medium text-sm transition-all text-left ${isSidebarOpen ? "" : "justify-center"}`}
-            >
-              <span className="text-lg">✔</span>
-              {isSidebarOpen && <span>할 일 관리</span>}
-            </button>
-            <button
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-800 font-medium text-sm transition-all text-left ${isSidebarOpen ? "" : "justify-center"}`}
-            >
-              <span className="text-lg">📅</span>
-              {isSidebarOpen && <span>캘린더</span>}
-            </button>
-          </nav>
+          ))}
         </div>
 
         {/* 프로필 영역 (닫혔을 때는 아바타만 노출) */}
