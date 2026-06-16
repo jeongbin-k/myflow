@@ -124,7 +124,7 @@ export default function App() {
         {/* 📊 대시보드 3층 레이아웃 컨테이너 */}
         <div className="space-y-6">
           {/* [1층]: 달력(2/4) + 도넛(1/4) + 막대(1/4) */}
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
             <div className="xl:col-span-7">
               <MainCalendar />
             </div>
