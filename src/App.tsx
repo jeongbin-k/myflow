@@ -1,3 +1,18 @@
+// 월간 캘린더
+import MainCalendar from "./components/MainCalendar";
+// 오늘 진행률 차트
+import ProgressDonut from "./components/ProgressDonut";
+// 주간 달성률 막대 차트
+import WeeklyBar from "./components/WeeklyBar";
+// 오늘 할 일 목록
+import TodoToday from "./components/TodoToday";
+// 할 일 완료 추이
+import TodoTrend from "./components/TodoTrend";
+// 최근 완료한 일
+import RecentlyDone from "./components/RecentlyDone";
+// 명언
+import Quotes from "./components/Quotes";
+
 import { useState } from "react";
 import {
   IconLayoutDashboard,
@@ -82,20 +97,20 @@ export default function App() {
           </div>
           {isSidebarOpen && (
             <div className="transition-all duration-200">
-              <p className="text-sm font-semibold text-slate-800">John Doe</p>
+              <p className="text-sm font-semibold text-slate-800">Jeong Bin</p>
               <p className="text-xs text-slate-400">오늘도 화이팅! 💪</p>
             </div>
           )}
         </div>
       </aside>
 
-      {/* 3. 우측 메인 대시보드 영역 */}
+      {/* 우측 메인 대시보드 영역 */}
       <main className="flex-1 h-full overflow-y-auto p-8">
         {/* 상단 헤더 */}
         <header className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-              안녕하세요, John님! 👋
+              안녕하세요, JeongBin님! 👋
             </h1>
             <p className="text-sm text-slate-500 mt-1">
               오늘도 멋진 하루를 만들어가요.
@@ -106,11 +121,38 @@ export default function App() {
           </button>
         </header>
 
-        {/* 대시보드 메인 그리드 방 들어설 자리 */}
-        <div className="border-2 border-dashed border-slate-200 rounded-2xl h-[calc(100vh-180px)] flex items-center justify-center bg-white transition-all">
-          <p className="text-slate-400 font-medium">
-            여기에 메인 캘린더와 차트들이 들어올 예정입니다!
-          </p>
+        {/* 📊 대시보드 3층 레이아웃 컨테이너 */}
+        <div className="space-y-6">
+          {/* [1층]: 달력(2/4) + 도넛(1/4) + 막대(1/4) */}
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+            <div className="xl:col-span-7">
+              <MainCalendar />
+            </div>
+            <div className="xl:col-span-2">
+              <ProgressDonut />
+            </div>
+            <div className="xl:col-span-3">
+              <WeeklyBar />
+            </div>
+          </div>
+
+          {/* [2층]: 오늘 할 일(1/3) + 완료 추이(1/3) + 최근 완료(1/3) -> 세로폭 400px 통일 */}
+          <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
+            <div className="xl:col-span-3">
+              <TodoToday />
+            </div>
+            <div className="xl:col-span-4">
+              <TodoTrend />
+            </div>
+            <div className="xl:col-span-3">
+              <RecentlyDone />
+            </div>
+          </div>
+
+          {/* [3층]: 오늘의 명언 (전체 너비 쭉 가로 지르기) */}
+          <div className="w-full">
+            <Quotes />
+          </div>
         </div>
       </main>
     </div>
