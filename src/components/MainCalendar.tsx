@@ -6,10 +6,13 @@ export default function MainCalendar() {
   const [currentYear, setCurrentYear] = useState(2026);
   const [currentMonth, setCurrentMonth] = useState(6); // 1월 ~ 12월
 
+  // 월간, 주간
+  const [viewType, setViewType] = useState("monthly");
+
   // 2. 요일 헤더 데이터
   const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
 
-  // 🧠 [핵심 달력 알고리즘] 이번 달의 날짜들을 계산하는 함수
+  // [핵심 달력 알고리즘] 이번 달의 날짜들을 계산하는 함수
   const generateCalendarDays = () => {
     // 자바스크립트 Date 객체는 월이 0부터 시작하므로 (Month - 1) 해줍니다.
     const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
@@ -28,6 +31,20 @@ export default function MainCalendar() {
     // 이번 달의 진짜 날짜들 채우기
     for (let i = 1; i <= totalDays; i++) {
       daysArray.push({ type: "current", day: i });
+    }
+
+    // 주간보기
+    if (viewType === "weekly") {
+      // 18일(오늘 가정)이 달력 배열에서 몇 번째 인덱스에 있는지 찾습니다.
+      const todayIdx = daysArray.findIndex(
+        (item) => item.type === "current" && item.day === 18,
+      );
+
+      // 달력은 7일씩 한 줄(Row)이므로, 오늘이 포함된 줄의 '시작 인덱스(일요일)'를 계산합니다.
+      const startOfWeekIdx = Math.floor(todayIdx / 7) * 7;
+
+      // slice를 이용해 딱 그 주간의 7일만 잘라서 반환합니다!
+      return daysArray.slice(startOfWeekIdx, startOfWeekIdx + 7);
     }
 
     return daysArray;
@@ -87,20 +104,25 @@ export default function MainCalendar() {
           </div>
         </div>
 
-        {/* 월간 보기 필터 (디자인용 껍데기) */}
-        <div className="text-xs font-semibold text-slate-500 border border-slate-200 rounded-lg px-2.5 py-1.5 bg-slate-50">
-          월간 보기
-        </div>
+        {/* 월간/주간 보기 셀렉트 박스 */}
+        <select
+          value={viewType}
+          onChange={(e) => setViewType(e.target.value)}
+          className="text-xs font-semibold text-slate-600 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 cursor-pointer outline-none"
+        >
+          <option value="monthly">월간 보기</option>
+          <option value="weekly">주간 보기</option>
+        </select>
       </div>
 
-      {/* 📅 달력 격자판 영역 */}
+      {/* 달력 격자판 영역 */}
       <div className="flex-1 flex flex-col justify-between">
         {/* 요일 행 (7열 고정) */}
-        <div className="grid grid-cols-7 text-center border-b border-slate-100 pb-2 text-xs font-semibold text-slate-400 tracking-wider">
+        <div className="grid grid-cols-7 text-center border-b border-slate-200 pb-2 text-xs font-semibold text-slate-400 tracking-wider">
           {weekdays.map((day, idx) => (
             <div
               key={idx}
-              className={`${day === "일" ? "text-red-400" : day === "토" ? "text-indigo-400" : ""}`}
+              className={`${day === "일" ? "text-red-400" : day === "토" ? "text-red-400" : ""}`}
             >
               {day}
             </div>
@@ -117,7 +139,7 @@ export default function MainCalendar() {
             return (
               <div
                 key={idx}
-                className="border-b border-r border-slate-50 p-1 flex flex-col justify-between items-start group min-h-[50px]"
+                className="border-b border-r border-slate-100 p-1 flex flex-col justify-between items-start group min-h-[50px]"
               >
                 {/* 날짜 숫자 표시 */}
                 <span
