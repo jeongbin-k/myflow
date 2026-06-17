@@ -14,18 +14,14 @@ import RecentlyDone from "./components/RecentlyDone";
 import Quotes from "./components/Quotes";
 
 import { useState } from "react";
-import {
-  IconLayoutDashboard,
-  IconCheckbox,
-  IconCalendar,
-} from "@tabler/icons-react";
+import { IconHome, IconCheckbox, IconCalendar } from "@tabler/icons-react";
 
 // 메뉴관리
 const menus = [
   {
     id: "dashboard",
     label: "대시보드",
-    icon: <IconLayoutDashboard size={20} />,
+    icon: <IconHome stroke={2} size={20} />,
   },
   { id: "tasks", label: "할 일 관리", icon: <IconCheckbox size={20} /> },
   { id: "calendar", label: "캘린더", icon: <IconCalendar size={20} /> },
@@ -126,7 +122,7 @@ export default function App() {
           {/* [1층]: 달력(2/4) + 도넛(1/4) + 막대(1/4) */}
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
             <div className="xl:col-span-7">
-              <MainCalendar />
+              <MainCalendar onNavigate={setCurrentMenu} />
             </div>
             <div className="xl:col-span-2">
               <ProgressDonut />
