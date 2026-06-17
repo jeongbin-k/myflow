@@ -38,12 +38,6 @@ const mockEvents: Record<string, { title: string; color: string }[]> = {
       color: " text-green-600 bg-green-50 px-1 rounded-sm truncate",
     },
   ],
-  "2026-6-17": [
-    {
-      title: "병원 예약",
-      color: " text-red-600 bg-red-50 px-1 rounded-sm truncate",
-    },
-  ],
   "2026-6-18": [
     {
       title: "병원 예약",
@@ -197,8 +191,11 @@ export default function MainCalendar({ onNavigate }: Props) {
             const eventKey = `${currentYear}-${currentMonth}-${item.day}`;
             const events =
               item.type === "current" ? (mockEvents[eventKey] ?? []) : [];
-            const visibleEvents = events.slice(0, 1); // 1개만 표시
-            const hiddenCount = events.length - 1; // 나머지 개수
+
+            // 월간,주간에 따라 노출 개수 동적 조절
+            const maxVisibleEvents = viewType == "weekly" ? 10 : 1;
+            const visibleEvents = events.slice(0, maxVisibleEvents);
+            const hiddenCount = Math.max(0, events.length - maxVisibleEvents);
 
             return (
               <div
