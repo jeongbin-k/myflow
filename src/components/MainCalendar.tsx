@@ -74,7 +74,6 @@ export default function MainCalendar({ onNavigate }: Props) {
   const [viewType, setViewType] = useState("monthly");
 
   const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
-
   const generateCalendarDays = () => {
     const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
     const lastDayOfMonth = new Date(currentYear, currentMonth, 0);
@@ -91,14 +90,15 @@ export default function MainCalendar({ onNavigate }: Props) {
       daysArray.push({ type: "current", day: i });
     }
 
+    // 수정된 로직 (월요일 ~ 일요일 기준)
     if (viewType === "weekly") {
+      // 18일이 속한 줄의 시작 인덱스(일요일)를 찾아서 딱 7일만 자르기
       const todayIdx = daysArray.findIndex(
         (item) => item.type === "current" && item.day === 18,
       );
       const startOfWeekIdx = Math.floor(todayIdx / 7) * 7;
       return daysArray.slice(startOfWeekIdx, startOfWeekIdx + 7);
     }
-
     return daysArray;
   };
 
@@ -172,6 +172,7 @@ export default function MainCalendar({ onNavigate }: Props) {
           {weekdays.map((day, idx) => (
             <div
               key={idx}
+              // 일요일과 토요일만 붉은 톤으로 깔끔하게 처리
               className={`${day === "일" || day === "토" ? "text-red-400" : ""}`}
             >
               {day}

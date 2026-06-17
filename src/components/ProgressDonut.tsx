@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 export default function ProgressDonut() {
   // 나중에 글로벌 상태(Context/Zustand)나 Supabase 데이터와 연결할 자리입니다.
-  const totalTasks = 2;
-  const completedTasks = 1;
+  const totalTasks = 5;
+  const completedTasks = 3;
   // 진행률 계산 공식
   const percentage =
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
