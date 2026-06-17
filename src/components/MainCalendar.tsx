@@ -41,7 +41,7 @@ const mockEvents: Record<string, { title: string; color: string }[]> = {
   "2026-6-18": [
     {
       title: "병원 예약",
-      color: " text-red-600 bg-red-50 px-1 rounded-sm truncate",
+      color: " text-red-600 bg-red-50 px-1 rounded-sm truncate ",
     },
     {
       title: "친구 만남",
@@ -200,7 +200,7 @@ export default function MainCalendar({ onNavigate }: Props) {
             return (
               <div
                 key={idx}
-                className="border-b border-r border-slate-100 p-1 flex flex-col items-start min-h-[50px]"
+                className="border-b border-r border-slate-100 p-1 flex flex-col items-start min-h-12.5"
               >
                 {/* 날짜 숫자 */}
                 <span
@@ -220,7 +220,7 @@ export default function MainCalendar({ onNavigate }: Props) {
                   {visibleEvents.map((event, i) => (
                     <div
                       key={i}
-                      className={`text-[9px] font-bold px-1 rounded-sm truncate ${event.color}`}
+                      className={`text-[10px] font-bold px-1 rounded-sm truncate ${event.color}`}
                     >
                       ● {event.title}
                     </div>
@@ -230,7 +230,7 @@ export default function MainCalendar({ onNavigate }: Props) {
                   {hiddenCount > 0 && (
                     <button
                       onClick={() => onNavigate("calendar")}
-                      className="text-[9px] text-indigo-400 hover:text-indigo-600 text-left transition-colors"
+                      className="text-[10px] text-indigo-400 hover:text-indigo-600 text-left transition-colors"
                     >
                       +{hiddenCount} 더보기
                     </button>

@@ -113,11 +113,11 @@ export default function App() {
             </p>
           </div>
           <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1 ">
-            <span>+</span> 새 할 일 추가
+            <span>+</span> 할 일 추가
           </button>
         </header>
 
-        {/* 📊 대시보드 3층 레이아웃 컨테이너 */}
+        {/*  대시보드 3층 레이아웃 컨테이너 */}
         <div className="space-y-6">
           {/* [1층]: 달력(2/4) + 도넛(1/4) + 막대(1/4) */}
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
