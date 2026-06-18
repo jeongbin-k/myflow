@@ -9,7 +9,9 @@ import TodoToday from "./components/TodoToday";
 // 할 일 완료 추이
 import TodoTrend from "./components/TodoTrend";
 // 최근 완료한 일
-import RecentlyDone from "./components/RecentlyDone";
+import TodoRecent from "./components/TodoRecent";
+// 카테고리 분석
+import CategoryAnalysis from "./components/CategoryAnalysis";
 // 명언
 import Quotes from "./components/Quotes";
 
@@ -37,7 +39,7 @@ export default function App() {
       {/* 2. 좌측 사이드바 영역 */}
       <aside
         className={`h-full bg-white border-r border-slate-100 flex flex-col justify-between p-4 shrink-0 relative transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? "w-64" : "w-20"
+          isSidebarOpen ? "w-55" : "w-20"
         }`}
       >
         {/* 접기/펼치기 토글 버튼 */}
@@ -132,7 +134,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* [2층]: 오늘 할 일(1/3) + 완료 추이(1/3) + 최근 완료(1/3) -> 세로폭 400px 통일 */}
+          {/* [2층]: 오늘 할 일(1/3) + 완료 추이(1/3) + 최근 완료(1/3)*/}
           <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
             <div className="xl:col-span-3">
               <TodoToday />
@@ -141,13 +143,18 @@ export default function App() {
               <TodoTrend />
             </div>
             <div className="xl:col-span-3">
-              <RecentlyDone />
+              <TodoRecent />
             </div>
           </div>
 
-          {/* [3층]: 오늘의 명언 (전체 너비 쭉 가로 지르기) */}
-          <div className="w-full">
-            <Quotes />
+          {/* [3층]: 카텍고리 분석 도넛 차트 / 오늘의 명언 */}
+          <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
+            <div className="xl:col-span-3">
+              <CategoryAnalysis />
+            </div>
+            <div className="xl:col-span-7">
+              <Quotes />
+            </div>
           </div>
         </div>
       </main>
