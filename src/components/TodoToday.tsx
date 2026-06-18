@@ -28,7 +28,7 @@ export default function TodoToday() {
     );
   };
 
-  // 카테고리별 이쁜 파스텔톤 색상 매칭 맵
+  // 카테고리별파스텔톤 색상 매칭 맵
   const categoryColors = {
     건강: "bg-emerald-50 text-emerald-600",
     공부: "bg-blue-50 text-blue-600",
@@ -40,7 +40,7 @@ export default function TodoToday() {
 
   return (
     <div className="w-full h-[400px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-      {/* 🔝 상단 헤더 영역 */}
+      {/* 상단 헤더 영역 */}
       <div className="flex justify-between items-center mb-4 shrink-0">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-bold text-slate-800 tracking-tight">
