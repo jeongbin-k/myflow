@@ -14,6 +14,8 @@ import TodoRecent from "./components/TodoRecent";
 import CategoryAnalysis from "./components/CategoryAnalysis";
 // 명언
 import Quotes from "./components/Quotes";
+// 로고
+import myflow from "./assets/images/myflow.jpg";
 
 import { useState } from "react";
 import { IconHome, IconCheckbox, IconCalendar } from "@tabler/icons-react";
@@ -39,7 +41,7 @@ export default function App() {
       {/* 2. 좌측 사이드바 영역 */}
       <aside
         className={`h-full bg-white border-r border-slate-100 flex flex-col justify-between p-4 shrink-0 relative transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? "w-55" : "w-20"
+          isSidebarOpen ? "w-64" : "w-20"
         }`}
       >
         {/* 접기/펼치기 토글 버튼 */}
@@ -55,8 +57,12 @@ export default function App() {
           <div
             className={`flex items-center gap-2 mb-8 px-2 ${isSidebarOpen ? "" : "justify-center"}`}
           >
-            <div className="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0">
-              M
+            <div>
+              <img
+                src={myflow}
+                alt="MyFlow Logo"
+                className="w-8 h-8 object-contain"
+              />
             </div>
             {isSidebarOpen && (
               <span className="text-xl font-bold text-slate-800 tracking-tight transition-all duration-200">
