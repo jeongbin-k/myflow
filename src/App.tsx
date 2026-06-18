@@ -15,7 +15,7 @@ import CategoryAnalysis from "./components/CategoryAnalysis";
 // 명언
 import Quotes from "./components/Quotes";
 // 로고
-import myflow from "./assets/images/myflow.jpg";
+import myflow from "./assets/images/myflow.png";
 
 import { useState } from "react";
 import { IconHome, IconCheckbox, IconCalendar } from "@tabler/icons-react";
