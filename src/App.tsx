@@ -10,13 +10,11 @@ import TodoToday from "./components/TodoToday";
 import TodoTrend from "./components/TodoTrend";
 // 최근 완료한 일 (연동 완료)
 import TodoRecent from "./components/TodoRecent";
-// 카테고리 분석
+// 카테고리 분석 (연동 완료)
 import CategoryAnalysis from "./components/CategoryAnalysis";
 // 명언
 import Quotes from "./components/Quotes";
-// 로고
 import myflow from "./assets/images/myflow.png";
-
 import { useState } from "react";
 import { IconHome, IconCheckbox, IconCalendar } from "@tabler/icons-react";
 
