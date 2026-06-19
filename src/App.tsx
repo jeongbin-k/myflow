@@ -1,14 +1,14 @@
 // 월간 캘린더
 import MainCalendar from "./components/MainCalendar";
-// 오늘 진행률 차트
+// 오늘 진행률 차트 (연동 완료)
 import ProgressDonut from "./components/ProgressDonut";
 // 주간 달성률 막대 차트
 import WeeklyBar from "./components/WeeklyBar";
-// 오늘 할 일 목록 (연동O)
+// 오늘 할 일 목록 (연동 완료)
 import TodoToday from "./components/TodoToday";
 // 할 일 완료 추이
 import TodoTrend from "./components/TodoTrend";
-// 최근 완료한 일 (연동O)
+// 최근 완료한 일 (연동 완료)
 import TodoRecent from "./components/TodoRecent";
 // 카테고리 분석
 import CategoryAnalysis from "./components/CategoryAnalysis";
