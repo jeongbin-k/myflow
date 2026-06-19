@@ -4,11 +4,11 @@ import MainCalendar from "./components/MainCalendar";
 import ProgressDonut from "./components/ProgressDonut";
 // 주간 달성률 막대 차트
 import WeeklyBar from "./components/WeeklyBar";
-// 오늘 할 일 목록
+// 오늘 할 일 목록 (연동O)
 import TodoToday from "./components/TodoToday";
 // 할 일 완료 추이
 import TodoTrend from "./components/TodoTrend";
-// 최근 완료한 일
+// 최근 완료한 일 (연동O)
 import TodoRecent from "./components/TodoRecent";
 // 카테고리 분석
 import CategoryAnalysis from "./components/CategoryAnalysis";
