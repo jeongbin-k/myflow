@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useTodos } from "../hooks/useTodos";
 
 export default function WeeklyBarChart() {
-  // 1. 전역 기지에서 진짜 데이터와 로딩 상태를 확보합니다.
+  // 1. 전역 기지에서 데이터와 로딩 상태를 확보
   const { todos, isLoading } = useTodos();
 
   // 애니메이션용 상태
@@ -17,11 +17,11 @@ export default function WeeklyBarChart() {
     }
   }, [isLoading]);
 
-  // 2. 이번 주(월~일) 날짜 범위 구하기 및 요일별 데이터 가공
-  const getWeeklyData = () => {
+  // 2. 이번 주(월~일) 날짜 범위 구하기 및 요일별/주간 총합 데이터 가공
+  const getWeeklyStats = () => {
     const labels = ["월", "화", "수", "목", "금", "토", "일"];
 
-    // 기본 뼈대 데이터 세팅 (0%로 초기화)
+    // 기본 요일별 뼈대 데이터 세팅 (0%로 초기화)
     const stats = labels.map((label) => ({ label, total: 0, completed: 0 }));
 
     const now = new Date();
@@ -38,7 +38,11 @@ export default function WeeklyBarChart() {
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
 
-    // 이번 주에 해당하는 투두만 돌면서 요일별 매칭
+    // 주간 누적 계산을 위한 카운터 변수
+    let totalTasks = 0;
+    let completedTasks = 0;
+
+    // 이번 주에 해당하는 투두만 돌면서 요일별 및 전체 누적 매칭
     todos.forEach((todo) => {
       // Supabase UTC 타임존과 KST(한국) 간의 9시간 시차 보정
       const utcDate = new Date(todo.created_at);
@@ -47,21 +51,27 @@ export default function WeeklyBarChart() {
 
       // 이번 주 범위 내에 있는 투두만 집계
       if (todoDate >= startOfWeek && todoDate <= endOfWeek) {
-        // ESLint 경고 해결: 재할당 안 하므로 const 사용
         const dayIdx = todoDate.getUTCDay();
 
         // 우리 배열 순서(월~일)에 맞게 인덱스 보정 (일요일 0 -> 인덱스 6으로)
         const adjustedIdx = dayIdx === 0 ? 6 : dayIdx - 1;
 
+        // 1) 요일별 카운트 증가
         stats[adjustedIdx].total++;
         if (todo.is_completed) {
           stats[adjustedIdx].completed++;
         }
+
+        // 2) 주간 누적 총합 카운트 증가
+        totalTasks++;
+        if (todo.is_completed) {
+          completedTasks++;
+        }
       }
     });
 
-    // 최종 UI용 퍼센트 배열로 변환
-    return stats.map((item) => {
+    // 요일별 UI용 퍼센트 배열로 변환
+    const weeklyData = stats.map((item) => {
       const percentage =
         item.total > 0 ? Math.round((item.completed / item.total) * 100) : 0;
       return {
@@ -69,20 +79,20 @@ export default function WeeklyBarChart() {
         percentage,
       };
     });
+
+    // 2안 반영: 이번 주 총 완료 개수 / 총 등록 개수로 진짜 주간 평균 달성률 산출
+    const averagePercentage =
+      totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+    return { weeklyData, averagePercentage };
   };
 
-  const weeklyData = getWeeklyData();
-
-  // 이번 주 평균 달성률 계산
-  const totalPercentage = weeklyData.reduce(
-    (acc, cur) => acc + cur.percentage,
-    0,
-  );
-  const averagePercentage = Math.round(totalPercentage / weeklyData.length);
+  // 가공된 데이터 해체 할당
+  const { weeklyData, averagePercentage } = getWeeklyStats();
 
   return (
     <div className="w-full h-[440px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-      {/* 🔝 상단 타이틀 및 평균 브리핑 영역 */}
+      {/* 상단 타이틀 및 평균 브리핑 영역 */}
       <div className="w-full shrink-0 flex flex-col gap-1 text-left">
         <h3 className="text-base font-bold text-slate-800 tracking-tight">
           이번 주 달성률
