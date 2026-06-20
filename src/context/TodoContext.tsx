@@ -21,6 +21,10 @@ export interface TodoContextType {
     due_date?: string,
   ) => Promise<void>;
   toggleTodo: (id: number, currentStatus: boolean) => Promise<void>;
+
+  // 모달 제어를 위한 상태 및 함수 추가 (6/20)
+  isModalOpen: boolean;
+  setIsModalOpen: (open: boolean) => void;
 }
 
 export const TodoContext = createContext<TodoContextType | undefined>(

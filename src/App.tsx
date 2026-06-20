@@ -14,6 +14,10 @@ import TodoRecent from "./components/TodoRecent";
 import CategoryAnalysis from "./components/CategoryAnalysis";
 // 명언
 import Quotes from "./components/Quotes";
+// 할일 추가 컴포넌트
+import AddTodoModal from "./components/AddTodoModal";
+import { useTodos } from "./hooks/useTodos";
+
 import myflow from "./assets/images/myflow.png";
 import { useState } from "react";
 import { IconHome, IconCheckbox, IconCalendar } from "@tabler/icons-react";
@@ -34,8 +38,13 @@ export default function App() {
   // 1. 사이드바 열림/닫힘 상태 추가 (기본값: 열림)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
+  // 할 일 추가 모달
+  const { isModalOpen, setIsModalOpen } = useTodos();
+
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F8FAFC]">
+      {/* 모달 */}
+      {isModalOpen && <AddTodoModal />}
       {/* 2. 좌측 사이드바 영역 */}
       <aside
         className={`h-full bg-white border-r border-slate-100 flex flex-col justify-between p-4 shrink-0 relative transition-all duration-300 ease-in-out ${
@@ -75,12 +84,12 @@ export default function App() {
               key={menu.id}
               onClick={() => setCurrentMenu(menu.id)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-      ${isSidebarOpen ? "" : "justify-center"}
-      ${
-        currentMenu === menu.id
-          ? "bg-indigo-50 text-indigo-600"
-          : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-      }`}
+        ${isSidebarOpen ? "" : "justify-center"}
+        ${
+          currentMenu === menu.id
+            ? "bg-indigo-50 text-indigo-600"
+            : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+        }`}
             >
               {menu.icon}
               {isSidebarOpen && <span>{menu.label}</span>}
@@ -118,7 +127,10 @@ export default function App() {
               오늘도 멋진 하루를 만들어가요.
             </p>
           </div>
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1 ">
+          <button
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1 "
+            onClick={() => setIsModalOpen(true)}
+          >
             <span>+</span> 할 일 추가
           </button>
         </header>

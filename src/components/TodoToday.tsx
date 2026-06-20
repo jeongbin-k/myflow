@@ -4,6 +4,8 @@ import { useMemo } from "react";
 export default function TodoToday() {
   // 전역 기지에서 데이터와 토글 함수, 로딩 상태를 꺼내온다.
   const { todos, isLoading, toggleTodo } = useTodos();
+  // 모달
+  const { setIsModalOpen } = useTodos();
 
   const todayStr = useMemo(() => {
     const now = new Date();
@@ -41,7 +43,10 @@ export default function TodoToday() {
         </div>
 
         {/* 나중에 실제 입력 모달이나 인풋을 띄울 트리거 버튼 */}
-        <button className="text-xs font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="text-xs font-bold text-indigo-500 hover:text-indigo-700 transition-colors"
+        >
           + 할 일 추가
         </button>
       </div>

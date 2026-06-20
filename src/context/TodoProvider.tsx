@@ -7,6 +7,9 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // 모달 상태 추가
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   // 1. supabase에서 전체 투두 리스트 가져오기
   const fetchTodos = async () => {
     try {
@@ -94,7 +97,15 @@ export function TodoProvider({ children }: { children: ReactNode }) {
 
   return (
     <TodoContext.Provider
-      value={{ todos, isLoading, fetchTodos, addTodo, toggleTodo }}
+      value={{
+        todos,
+        isLoading,
+        fetchTodos,
+        addTodo,
+        toggleTodo,
+        isModalOpen,
+        setIsModalOpen,
+      }}
     >
       {children}
     </TodoContext.Provider>
