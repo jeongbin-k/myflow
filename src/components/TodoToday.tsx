@@ -1,38 +1,22 @@
 import { useTodos } from "../hooks/useTodos";
-
-// // 나중에 Supabase 및 글로벌 상태로 전환될 투두 가상 데이터
-// interface Todo {
-//   id: number;
-//   title: string;
-//   category: "건강" | "공부" | "업무" | "일상";
-//   isCompleted: boolean;
-// }
+import { useMemo } from "react";
 
 export default function TodoToday() {
   // 전역 기지에서 데이터와 토글 함수, 로딩 상태를 꺼내온다.
   const { todos, isLoading, toggleTodo } = useTodos();
 
+  const todayStr = useMemo(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }, []);
+
+  const todayTodos = todos.filter((todo) => todo.due_date === todayStr);
+
   // 진행도 계산
-  const completedCount = todos.filter((t) => t.is_completed).length;
-
-  // const [todos, setTodos] = useState<Todo[]>([
-  //   { id: 1, title: "운동하기", category: "건강", isCompleted: true },
-  //   { id: 2, title: "React 공부 2시간", category: "공부", isCompleted: true },
-  //   { id: 3, title: "정보처리기사 공부", category: "공부", isCompleted: false },
-  //   { id: 4, title: "헬스장", category: "건강", isCompleted: false },
-  //   { id: 5, title: "포트폴리오 수정", category: "업무", isCompleted: false },
-  //   { id: 6, title: "저녁 장보기", category: "일상", isCompleted: false }, // 스크롤 테스트용 추가 데이터
-  //   { id: 7, title: "블로그 글 쓰기", category: "공부", isCompleted: false }, // 스크롤 테스트용 추가 데이터
-  // ]);
-
-  // // 체크박스 토글 함수
-  // const handleToggle = (id: number) => {
-  //   setTodos((prev) =>
-  //     prev.map((todo) =>
-  //       todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo,
-  //     ),
-  //   );
-  // };
+  const completedCount = todayTodos.filter((t) => t.is_completed).length;
 
   // 카테고리별파스텔톤 색상 매칭 맵
   const categoryColors: Record<string, string> = {
@@ -52,7 +36,7 @@ export default function TodoToday() {
           </h3>
           {/* 총 개수 알림 배지 */}
           <span className="bg-indigo-50 text-indigo-600 text-xs font-extrabold px-2 py-0.5 rounded-full">
-            {todos.length}
+            {todayTodos.length}
           </span>
         </div>
 
@@ -67,13 +51,13 @@ export default function TodoToday() {
         <div className="flex-1 flex items-center justify-center text-sm font-bold text-slate-400">
           로딩 중...
         </div>
-      ) : todos.length === 0 ? (
+      ) : todayTodos.length === 0 ? (
         <div className="flex-1 flex items-center justify-center text-sm text-slate-400">
           할 일이 없습니다. 새로운 할 일을 추가해 보세요!
         </div>
       ) : (
         <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 scrollbar-thin scrollbar-thumb-slate-200">
-          {todos.map((todo) => (
+          {todayTodos.map((todo) => (
             <div
               key={todo.id}
               onClick={() => toggleTodo(todo.id, todo.is_completed)}
@@ -135,7 +119,7 @@ export default function TodoToday() {
       <div className="mt-4 pt-3 border-t border-slate-50 text-xs font-semibold text-slate-400 flex justify-between items-center shrink-0">
         <span>오늘 할 일 진행도</span>
         <span className="text-indigo-600 font-extrabold">
-          {completedCount} / {todos.length} 완료
+          {completedCount} / {todayTodos.length} 완료
         </span>
       </div>
     </div>
