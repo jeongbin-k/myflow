@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTodos } from "../hooks/useTodos";
 
-const categories = ["일상", "업무", "건강", "공부"] as const;
+const categories = ["건강", "공부", "업무", "일상"] as const;
 
 const categoryStyles: Record<string, string> = {
   건강: "bg-emerald-50 text-emerald-600 border-emerald-200",
@@ -19,29 +19,43 @@ function getTodayStr() {
 }
 
 export default function AddTodoModal() {
-  const { isModalOpen, setIsModalOpen, addTodo } = useTodos();
+  const {
+    isModalOpen,
+    setIsModalOpen,
+    addTodo,
+    updateTodo,
+    editingTodo,
+    setEditingTodo,
+  } = useTodos();
 
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<string>("일상");
-  const [dueDate, setDueDate] = useState(getTodayStr());
+  const isEditMode = editingTodo !== null;
+
+  const [title, setTitle] = useState(editingTodo?.title ?? "");
+  const [category, setCategory] = useState<string>(
+    editingTodo?.category ?? "일상",
+  );
+  const [dueDate, setDueDate] = useState(
+    editingTodo?.due_date ?? getTodayStr(),
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isModalOpen) return null;
 
   const handleClose = () => {
-    // 입력값 초기화 후 닫기
-    setTitle("");
-    setCategory("일상");
-    setDueDate(getTodayStr());
     setIsModalOpen(false);
+    setEditingTodo(null); // 닫을 때 수정 모드 초기화
   };
 
   const handleSubmit = async () => {
-    if (!title.trim()) return; // 빈 제목 방지
+    if (!title.trim()) return;
 
     setIsSubmitting(true);
     try {
-      await addTodo(title.trim(), category, dueDate);
+      if (isEditMode && editingTodo) {
+        await updateTodo(editingTodo.id, title.trim(), category, dueDate);
+      } else {
+        await addTodo(title.trim(), category, dueDate);
+      }
       handleClose();
     } finally {
       setIsSubmitting(false);
@@ -49,18 +63,18 @@ export default function AddTodoModal() {
   };
 
   return (
-    // 배경 오버레이
     <div
       className="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50"
       onClick={handleClose}
     >
-      {/* 모달 본체 (배경 클릭과 분리하기 위해 stopPropagation) */}
       <div
         onClick={(e) => e.stopPropagation()}
         className="bg-white rounded-2xl shadow-xl w-[400px] p-6 flex flex-col gap-5"
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-800">새 할 일 추가</h2>
+          <h2 className="text-lg font-bold text-slate-800">
+            {isEditMode ? "할 일 수정" : "새 할 일 추가"}
+          </h2>
           <button
             onClick={handleClose}
             className="text-slate-400 hover:text-slate-600 text-xl leading-none"
@@ -69,7 +83,6 @@ export default function AddTodoModal() {
           </button>
         </div>
 
-        {/* 제목 입력 */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-slate-500">제목</label>
           <input
@@ -85,7 +98,6 @@ export default function AddTodoModal() {
           />
         </div>
 
-        {/* 카테고리 선택 버튼 4개 */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-slate-500">카테고리</label>
           <div className="flex gap-2">
@@ -105,7 +117,6 @@ export default function AddTodoModal() {
           </div>
         </div>
 
-        {/* 날짜 선택 */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-slate-500">날짜</label>
           <input
@@ -116,7 +127,6 @@ export default function AddTodoModal() {
           />
         </div>
 
-        {/* 하단 버튼 */}
         <div className="flex gap-2 mt-2">
           <button
             onClick={handleClose}
@@ -129,7 +139,7 @@ export default function AddTodoModal() {
             disabled={!title.trim() || isSubmitting}
             className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
           >
-            {isSubmitting ? "추가 중..." : "추가하기"}
+            {isSubmitting ? "처리 중..." : isEditMode ? "수정하기" : "추가하기"}
           </button>
         </div>
       </div>

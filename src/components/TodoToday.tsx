@@ -1,5 +1,6 @@
 import { useTodos } from "../hooks/useTodos";
 import { useMemo } from "react";
+import TodoMenu from "./TodoMenu";
 
 export default function TodoToday() {
   // 전역 기지에서 데이터와 토글 함수, 로딩 상태를 꺼내온다.
@@ -63,58 +64,59 @@ export default function TodoToday() {
       ) : (
         <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 scrollbar-thin scrollbar-thumb-slate-200">
           {todayTodos.map((todo) => (
-            <div
-              key={todo.id}
-              onClick={() => toggleTodo(todo.id, todo.is_completed)}
-              className="flex items-center justify-between p-3 rounded-xl border border-slate-50 hover:border-slate-100 bg-slate-50/30 hover:bg-slate-50/70 transition-all cursor-pointer group"
-            >
-              {/* 왼쪽: 커스텀 체크박스 + 투두 내용 */}
-              <div className="flex items-center gap-3 min-w-0">
-                {/* 시안 이미지와 똑같은 완벽한 동그라미 보라색 체크박스 */}
-                <div className="relative flex items-center justify-center shrink-0">
-                  {/* 실제 스크린 리더 인식 및 데이터 처리를 위한 진짜 input은 숨겨둡니다. */}
-                  <input
-                    type="checkbox"
-                    checked={todo.is_completed}
-                    readOnly
-                    className="sr-only"
-                  />
-                  {/* 시각적으로 보여질 커스텀 동그라미 디자인 */}
-                  <div
-                    className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-200
-            ${
-              todo.is_completed
-                ? "bg-indigo-600 border-indigo-600 text-white"
-                : "border-slate-200 bg-white group-hover:border-indigo-300"
-            }`}
-                  >
-                    {/* 체크되었을 때만 화살표(✓) 노출 */}
-                    {todo.is_completed && (
-                      <svg
-                        className="w-3 h-3 fill-none stroke-current stroke-[3]"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    )}
+            // ✅ 바깥 wrapper: 카드 + ⋮ 버튼을 나란히 배치
+            <div key={todo.id} className="flex items-center gap-1 group">
+              {/* 카드 영역 (기존 호버 박스) */}
+              <div
+                onClick={() => toggleTodo(todo.id, todo.is_completed)}
+                className="flex items-center justify-between flex-1 min-w-0 p-3 rounded-xl border border-slate-50 hover:border-slate-100 bg-slate-50/30 hover:bg-slate-50/70 transition-all cursor-pointer"
+              >
+                {/* 왼쪽: 체크박스 + 제목 */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="relative flex items-center justify-center shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={todo.is_completed}
+                      readOnly
+                      className="sr-only"
+                    />
+                    <div
+                      className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-200
+                  ${
+                    todo.is_completed
+                      ? "bg-indigo-600 border-indigo-600 text-white"
+                      : "border-slate-200 bg-white group-hover:border-indigo-300"
+                  }`}
+                    >
+                      {todo.is_completed && (
+                        <svg
+                          className="w-3 h-3 fill-none stroke-current stroke-[3]"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                      )}
+                    </div>
                   </div>
+
+                  <span
+                    className={`text-sm font-medium truncate transition-all duration-200
+                ${todo.is_completed ? "text-slate-400 font-normal" : "text-slate-700"}`}
+                  >
+                    {todo.title}
+                  </span>
                 </div>
 
-                {/* 투두 제목 (텍스트 색상 밸런스 조정) */}
+                {/* 오른쪽: 카테고리 배지만 (메뉴는 카드 밖으로 뺐음) */}
                 <span
-                  className={`text-sm font-medium truncate transition-all duration-200
-          ${todo.is_completed ? "text-slate-400 font-normal" : "text-slate-700"}`}
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded shrink-0 ${categoryColors[todo.category] ?? "bg-slate-50 text-slate-500"}`}
                 >
-                  {todo.title}
+                  {todo.category}
                 </span>
               </div>
 
-              {/* 오른쪽: 카테고리 뱃지 */}
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded shrink-0 ${categoryColors[todo.category] ?? "bg-slate-50 text-slate-500"}`}
-              >
-                {todo.category}
-              </span>
+              {/* ✅ 카드 바깥, 별도 공간의 ⋮ 메뉴 */}
+              <TodoMenu todo={todo} />
             </div>
           ))}
         </div>
