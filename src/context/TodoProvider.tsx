@@ -7,6 +7,8 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // 수정 상태 추가
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   // 모달 상태 추가
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -58,7 +60,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // 3. 할 일 완료 상태 토글 체크박스 클릭시 (UPDATE)
+  // 3. 할 일 완료 상태 토글 체크박스 클릭시
   const toggleTodo = async (id: number, currentStatus: boolean) => {
     const nextStatus = !currentStatus;
     // 완료 체크 시 현재 시간 기록, 해제 시 null 처리
@@ -89,7 +91,46 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // 4. 웹이 켜지자마자 DB에서 데이터를 자동으로 긁어옴
+  // 4. 할 일 수정하기 (UPDATE)
+  const updateTodo = async (
+    id: number,
+    title: string,
+    category: string,
+    dueDate: string,
+  ) => {
+    try {
+      const { error } = await supabase
+        .from("todos")
+        .update({ title, category, due_date: dueDate })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo.id === id
+            ? { ...todo, title, category, due_date: dueDate }
+            : todo,
+        ),
+      );
+    } catch (error) {
+      console.log("할 일 수정 실패", error);
+    }
+  };
+
+  // 할일 삭제하기 (DELETE)
+  const deleteTodo = async (id: number) => {
+    try {
+      const { error } = await supabase.from("todos").delete().eq("id", id);
+      if (error) throw error;
+
+      setTodos((prev) => prev.filter((todo) => todo.id !== id));
+    } catch (error) {
+      console.log("할 일 삭제 실패", error);
+    }
+  };
+
+  // 웹이 켜지자마자 DB에서 데이터를 자동으로 긁어옴
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTodos();
@@ -105,6 +146,10 @@ export function TodoProvider({ children }: { children: ReactNode }) {
         toggleTodo,
         isModalOpen,
         setIsModalOpen,
+        updateTodo,
+        deleteTodo,
+        editingTodo,
+        setEditingTodo,
       }}
     >
       {children}

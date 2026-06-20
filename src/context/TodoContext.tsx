@@ -21,6 +21,17 @@ export interface TodoContextType {
     due_date?: string,
   ) => Promise<void>;
   toggleTodo: (id: number, currentStatus: boolean) => Promise<void>;
+  updateTodo: (
+    id: number,
+    title: string,
+    category: string,
+    dueDate: string,
+  ) => Promise<void>;
+  deleteTodo: (id: number) => Promise<void>;
+
+  // "추가모드" , "수정 모드"를 하나의 모달같이 처리하게끔
+  editingTodo: Todo | null;
+  setEditingTodo: (todo: Todo | null) => void;
 
   // 모달 제어를 위한 상태 및 함수 추가 (6/20)
   isModalOpen: boolean;
