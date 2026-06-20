@@ -24,12 +24,26 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // 2. 새 할 일 추가하기 (CREATE)
-  const addTodo = async (title: string, category: string) => {
+  // 2. 새 할 일 추가하기 (CREATE) - due_date 확장 반영
+  const addTodo = async (title: string, category: string, dueDate?: string) => {
+    // 만약dueDate 인자가 안 넘어오면, 로컬 브라우저 타임존 기준의 오늘 날짜(YYYY-MM-DD)를 기본값으로 사용합니다.
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const date = String(now.getDate()).padStart(2, "0");
+    const defaultTodayStr = `${year}-${month}-${date}`;
+
     try {
       const { data, error } = await supabase
         .from("todos")
-        .insert([{ title, category, is_completed: false }])
+        .insert([
+          {
+            title,
+            category,
+            is_completed: false,
+            due_date: dueDate ?? defaultTodayStr, // 넘겨받은 날짜가 없다면 오늘 날짜 기본 할당
+          },
+        ])
         .select();
 
       if (error) throw error;
@@ -41,7 +55,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  //3. 할 일 완료 상태 토글 체크박스 클릭시 (UPDATE)
+  // 3. 할 일 완료 상태 토글 체크박스 클릭시 (UPDATE)
   const toggleTodo = async (id: number, currentStatus: boolean) => {
     const nextStatus = !currentStatus;
     // 완료 체크 시 현재 시간 기록, 해제 시 null 처리
@@ -74,8 +88,6 @@ export function TodoProvider({ children }: { children: ReactNode }) {
 
   // 4. 웹이 켜지자마자 DB에서 데이터를 자동으로 긁어옴
   useEffect(() => {
-    // fetchTodos 내부의 setState는 모두 await 이후(비동기 콜백)에서 호출되므로
-    // 실제로는 effect와 동기적으로 실행되지 않습니다. (lint 정적분석의 false positive)
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTodos();
   }, []);
@@ -88,6 +100,3 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     </TodoContext.Provider>
   );
 }
-
-// 컴포넌트들이 이 훅을 불러와서 데이터를 편하게 꺼내 씀
-// => useTodos.ts 로 보냄 커스텀훅
