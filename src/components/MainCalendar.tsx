@@ -1,79 +1,56 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useTodos } from "../hooks/useTodos";
+import type { Todo } from "../context/TodoContext";
 
 type Props = {
   onNavigate: (menu: string) => void;
 };
 
-// 하드코딩 이벤트 데이터 (나중에 Supabase로 교체할 자리)
-const mockEvents: Record<string, { title: string; color: string }[]> = {
-  "2026-6-3": [
-    {
-      title: "요가 수업",
-      color: "text-indigo-600 bg-indigo-50 px-1 rounded-sm truncate",
-    },
-  ],
-  "2026-6-5": [
-    {
-      title: "React 공부",
-      color: " text-blue-600 bg-blue-50 px-1 rounded-sm truncate",
-    },
-  ],
-  "2026-6-10": [
-    {
-      title: "프로젝트 미팅",
-      color: " text-red-600 bg-red-50 px-1 rounded-sm truncate",
-    },
-    {
-      title: "팀 점심",
-      color: " text-green-600 bg-green-50 px-1 rounded-sm truncate",
-    },
-    {
-      title: "코드 리뷰",
-      color: " text-indigo-600 bg-indigo-50 px-1 rounded-sm truncate",
-    },
-  ],
-  "2026-6-15": [
-    {
-      title: "운동하기",
-      color: " text-green-600 bg-green-50 px-1 rounded-sm truncate",
-    },
-  ],
-  "2026-6-18": [
-    {
-      title: "병원 예약",
-      color: " text-red-600 bg-red-50 px-1 rounded-sm truncate ",
-    },
-    {
-      title: "친구 만남",
-      color: " text-blue-600 bg-blue-50 px-1 rounded-sm truncate",
-    },
-  ],
-  "2026-6-22": [
-    {
-      title: "독서",
-      color: " text-indigo-600 bg-indigo-50 px-1 rounded-sm truncate",
-    },
-  ],
-  "2026-6-25": [
-    {
-      title: "블로그 작성",
-      color: " text-blue-600 bg-blue-50 px-1 rounded-sm truncate",
-    },
-  ],
-  "2026-6-27": [
-    {
-      title: "쇼핑하기",
-      color: "text-green-600 bg-green-50 px-1 rounded-sm truncate",
-    },
-  ],
+// 카테고리별 이벤트 색상 (다른 컴포넌트들과 동일한 톤 유지)
+const categoryColors: Record<string, string> = {
+  건강: "text-emerald-600 bg-emerald-50",
+  공부: "text-blue-600 bg-blue-50",
+  업무: "text-purple-600 bg-purple-50",
+  일상: "text-amber-600 bg-amber-50",
 };
 
+function getTodayParts() {
+  const now = new Date();
+  return {
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    day: now.getDate(),
+  };
+}
+
 export default function MainCalendar({ onNavigate }: Props) {
-  const [currentYear, setCurrentYear] = useState(2026);
-  const [currentMonth, setCurrentMonth] = useState(6);
+  const { todos } = useTodos();
+
+  const today = getTodayParts();
+  const [currentYear, setCurrentYear] = useState(today.year);
+  const [currentMonth, setCurrentMonth] = useState(today.month);
   const [viewType, setViewType] = useState("monthly");
 
+  // todos를 due_date 기준으로 그룹핑: { "2026-6-3": [todo, todo], ... }
+  // 키 형식을 due_date("2026-06-03")가 아니라 "2026-6-3"(0패딩 없음)으로 통일
+  const eventsByDate = useMemo(() => {
+    const map: Record<string, Todo[]> = {};
+
+    todos.forEach((todo) => {
+      if (!todo.due_date) return;
+
+      const [y, m, d] = todo.due_date.split("-").map(Number);
+      const key = `${y}-${m}-${d}`; // 0패딩 없는 키로 통일
+
+      if (!map[key]) map[key] = [];
+      map[key].push(todo);
+    });
+
+    return map;
+  }, [todos]);
+
   const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+
   const generateCalendarDays = () => {
     const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
     const lastDayOfMonth = new Date(currentYear, currentMonth, 0);
@@ -81,7 +58,7 @@ export default function MainCalendar({ onNavigate }: Props) {
     const totalDays = lastDayOfMonth.getDate();
     const startDayOfWeek = firstDayOfMonth.getDay();
 
-    const daysArray = [];
+    const daysArray: { type: string; day: number | string }[] = [];
 
     for (let i = 0; i < startDayOfWeek; i++) {
       daysArray.push({ type: "prev", day: "" });
@@ -90,13 +67,17 @@ export default function MainCalendar({ onNavigate }: Props) {
       daysArray.push({ type: "current", day: i });
     }
 
-    // 수정된 로직 (월요일 ~ 일요일 기준)
     if (viewType === "weekly") {
-      // 18일이 속한 줄의 시작 인덱스(일요일)를 찾아서 딱 7일만 자르기
+      // 오늘이 이 달에 없으면(다른 달 보는 중이면) 1일이 속한 주를 기준으로
       const todayIdx = daysArray.findIndex(
-        (item) => item.type === "current" && item.day === 18,
+        (item) =>
+          item.type === "current" &&
+          item.day === today.day &&
+          currentMonth === today.month &&
+          currentYear === today.year,
       );
-      const startOfWeekIdx = Math.floor(todayIdx / 7) * 7;
+      const baseIdx = todayIdx !== -1 ? todayIdx : 0;
+      const startOfWeekIdx = Math.floor(baseIdx / 7) * 7;
       return daysArray.slice(startOfWeekIdx, startOfWeekIdx + 7);
     }
     return daysArray;
@@ -122,9 +103,13 @@ export default function MainCalendar({ onNavigate }: Props) {
     }
   };
 
+  const handleToday = () => {
+    setCurrentYear(today.year);
+    setCurrentMonth(today.month);
+  };
+
   return (
     <div className="w-full h-[440px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-      {/* 상단 헤더 */}
       <div className="flex justify-between items-center mb-4 shrink-0">
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-bold text-slate-800">
@@ -144,10 +129,7 @@ export default function MainCalendar({ onNavigate }: Props) {
               &gt;
             </button>
             <button
-              onClick={() => {
-                setCurrentYear(2026);
-                setCurrentMonth(6);
-              }}
+              onClick={handleToday}
               className="px-3 py-1 text-xs text-slate-600 border-x border-slate-200 font-medium"
             >
               오늘
@@ -165,14 +147,11 @@ export default function MainCalendar({ onNavigate }: Props) {
         </select>
       </div>
 
-      {/* 달력 격자판 */}
       <div className="flex-1 flex flex-col justify-between">
-        {/* 요일 헤더 */}
         <div className="grid grid-cols-7 text-center border-b border-slate-200 pb-2 text-xs font-semibold text-slate-400 tracking-wider">
           {weekdays.map((day, idx) => (
             <div
               key={idx}
-              // 일요일과 토요일만 붉은 톤으로 깔끔하게 처리
               className={`${day === "일" || day === "토" ? "text-red-400" : ""}`}
             >
               {day}
@@ -180,21 +159,20 @@ export default function MainCalendar({ onNavigate }: Props) {
           ))}
         </div>
 
-        {/* 날짜 판 */}
         <div className="grid grid-cols-7 flex-1 pt-1">
           {calendarDays.map((item, idx) => {
             const isSunday = idx % 7 === 0;
             const isSaturday = idx % 7 === 6;
             const isToday =
-              item.day === 18 && currentMonth === 6 && currentYear === 2026;
+              item.day === today.day &&
+              currentMonth === today.month &&
+              currentYear === today.year;
 
-            // 이 날짜의 이벤트 가져오기
             const eventKey = `${currentYear}-${currentMonth}-${item.day}`;
             const events =
-              item.type === "current" ? (mockEvents[eventKey] ?? []) : [];
+              item.type === "current" ? (eventsByDate[eventKey] ?? []) : [];
 
-            // 월간,주간에 따라 노출 개수 동적 조절
-            const maxVisibleEvents = viewType == "weekly" ? 10 : 1;
+            const maxVisibleEvents = viewType === "weekly" ? 10 : 1;
             const visibleEvents = events.slice(0, maxVisibleEvents);
             const hiddenCount = Math.max(0, events.length - maxVisibleEvents);
 
@@ -203,7 +181,6 @@ export default function MainCalendar({ onNavigate }: Props) {
                 key={idx}
                 className="border-b border-r border-slate-100 p-1 flex flex-col items-start min-h-12.5"
               >
-                {/* 날짜 숫자 */}
                 <span
                   className={`text-xs font-semibold w-5 h-5 flex items-center justify-center rounded-full
                     ${item.type === "prev" ? "text-transparent" : "text-slate-700"}
@@ -215,19 +192,19 @@ export default function MainCalendar({ onNavigate }: Props) {
                   {item.day}
                 </span>
 
-                {/* 이벤트 영역 */}
                 <div className="w-full mt-1 flex flex-col gap-0.5">
-                  {/* 1개만 표시 */}
-                  {visibleEvents.map((event, i) => (
+                  {visibleEvents.map((todo) => (
                     <div
-                      key={i}
-                      className={`text-[10px] font-bold px-1 rounded-sm truncate ${event.color}`}
+                      key={todo.id}
+                      className={`text-[10px] font-bold px-1 rounded-sm truncate ${
+                        categoryColors[todo.category] ??
+                        "text-slate-500 bg-slate-50"
+                      }`}
                     >
-                      ● {event.title}
+                      ● {todo.title}
                     </div>
                   ))}
 
-                  {/* +N 더보기 버튼 */}
                   {hiddenCount > 0 && (
                     <button
                       onClick={() => onNavigate("calendar")}
