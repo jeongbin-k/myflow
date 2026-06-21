@@ -116,7 +116,10 @@ export default function App() {
       </aside>
 
       {/* 우측 메인 대시보드 영역 */}
-      <main className="flex-1 h-full overflow-y-auto p-8">
+      <main
+        id="dashboard-scroll-area"
+        className="flex-1 h-full overflow-y-auto p-8"
+      >
         {/* 상단 헤더 */}
         <header className="flex justify-between items-center mb-8">
           <div>
@@ -131,7 +134,7 @@ export default function App() {
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1 "
             onClick={() => setIsModalOpen(true)}
           >
-            <span>+</span> 할 일 추가
+            <span>+</span> 할 일 등록
           </button>
         </header>
 

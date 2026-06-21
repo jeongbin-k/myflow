@@ -64,7 +64,7 @@ export default function TodoToday() {
       ) : (
         <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 scrollbar-thin scrollbar-thumb-slate-200">
           {todayTodos.map((todo) => (
-            // ✅ 바깥 wrapper: 카드 + ⋮ 버튼을 나란히 배치
+            //  바깥 wrapper: 카드 + ⋮ 버튼을 나란히 배치
             <div key={todo.id} className="flex items-center gap-1 group">
               {/* 카드 영역 (기존 호버 박스) */}
               <div
@@ -115,7 +115,7 @@ export default function TodoToday() {
                 </span>
               </div>
 
-              {/* ✅ 카드 바깥, 별도 공간의 ⋮ 메뉴 */}
+              {/* 카드 바깥, 별도 공간의 ⋮ 메뉴 */}
               <TodoMenu todo={todo} />
             </div>
           ))}

@@ -75,6 +75,19 @@ export default function TodoMenu({ todo }: Props) {
     setIsOpen(false);
   };
 
+  // "최종 편집" 표시 로직
+  function formatLastEdited(isoString: string): string {
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const ampm = hours < 12 ? "오전" : "오후";
+    const displayHour = hours % 12 === 0 ? 12 : hours % 12;
+
+    return `${year}년 ${month}월 ${day}일 ${ampm} ${displayHour}시 ${minutes}분`;
+  }
   return (
     <>
       <button
@@ -99,22 +112,33 @@ export default function TodoMenu({ todo }: Props) {
               top: menuPosition.top,
               left: menuPosition.left,
             }}
-            className="w-32 bg-white border border-slate-100 rounded-xl shadow-lg py-1.5 z-50"
+            className="w-60 bg-white border border-slate-200 rounded-xl shadow-lg py-2 z-50"
           >
             <button
               onClick={handleEdit}
-              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+              className="flex items-center gap-3 w-full text-left px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              <IconPencil size={16} stroke={2} />
+              <IconPencil size={17} stroke={1.75} className="text-slate-400" />
               편집
             </button>
             <button
               onClick={handleDelete}
-              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-red-400 transition-colors"
+              className="flex items-center gap-3 w-full text-left px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-red-500 transition-colors"
             >
-              <IconTrash size={16} stroke={2} />
+              <IconTrash
+                size={17}
+                stroke={1.75}
+                className="text-slate-400 group-hover:text-red-400"
+              />
               삭제
             </button>
+
+            <div className="border-t border-slate-100 mt-1.5 pt-2.5 px-3 pb-1.5">
+              <p className="text-xs text-slate-400">최종 편집</p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {formatLastEdited(todo.updated_at)}
+              </p>
+            </div>
           </div>,
           document.body,
         )}
