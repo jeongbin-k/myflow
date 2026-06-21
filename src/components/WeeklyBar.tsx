@@ -44,25 +44,25 @@ export default function WeeklyBarChart() {
 
     // 이번 주에 해당하는 투두만 돌면서 요일별 및 전체 누적 매칭
     todos.forEach((todo) => {
-      // Supabase UTC 타임존과 KST(한국) 간의 9시간 시차 보정
-      const utcDate = new Date(todo.created_at);
-      const kstTime = utcDate.getTime() + 9 * 60 * 60 * 1000;
-      const todoDate = new Date(kstTime);
+      const todoDateStr = todo.due_date || todo.completed_at;
+      if (!todoDateStr) return; // return을 먼저 체크하는 줄로 옮김 (순서 중요)
 
-      // 이번 주 범위 내에 있는 투두만 집계
+      // "YYYY-MM-DD" 앞 10글자만 잘라서, 로컬 타임존 기준으로 직접 Date 생성
+      const [year, month, day] = todoDateStr
+        .slice(0, 10)
+        .split("-")
+        .map(Number);
+      const todoDate = new Date(year, month - 1, day);
+
       if (todoDate >= startOfWeek && todoDate <= endOfWeek) {
-        const dayIdx = todoDate.getUTCDay();
-
-        // 우리 배열 순서(월~일)에 맞게 인덱스 보정 (일요일 0 -> 인덱스 6으로)
+        const dayIdx = todoDate.getDay(); // getUTCDay() → getDay()로 변경
         const adjustedIdx = dayIdx === 0 ? 6 : dayIdx - 1;
 
-        // 1) 요일별 카운트 증가
         stats[adjustedIdx].total++;
         if (todo.is_completed) {
           stats[adjustedIdx].completed++;
         }
 
-        // 2) 주간 누적 총합 카운트 증가
         totalTasks++;
         if (todo.is_completed) {
           completedTasks++;
