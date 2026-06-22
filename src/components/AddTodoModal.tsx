@@ -21,6 +21,7 @@ export default function AddTodoModal() {
     setEditingTodo,
     categories,
     addCategory,
+    deleteCategory,
   } = useTodos();
 
   const isEditMode = editingTodo !== null;
@@ -94,17 +95,30 @@ export default function AddTodoModal() {
 
   const handleAddCategorySubmit = async () => {
     const trimmed = newCategoryName.trim();
+
+    // 이미 닫힌 상태(중복 호출)면 아무것도 안 함
+    if (!isAddingCategory) return;
+
+    setIsAddingCategory(false); // 가장 먼저 닫아서 재호출 차단
+
     if (!trimmed) {
-      setIsAddingCategory(false);
+      setNewCategoryName("");
       return;
     }
+
     const created = await addCategory(trimmed);
     if (created) {
-      setCategory(created.name); // 추가하면서 바로 선택
+      setCategory(created.name);
     }
     setNewCategoryName("");
-    setIsAddingCategory(false);
   };
+
+  //
+  const sortedCategories = [...categories].sort((a, b) => {
+    if (a.name === "일상") return -1;
+    if (b.name === "일상") return 1;
+    return 0;
+  });
 
   return (
     <div
@@ -185,24 +199,38 @@ export default function AddTodoModal() {
             }}
           />
         </div>
-
         {/* 카테고리 칩 영역 */}
         <div className="flex flex-col gap-2">
           <label className="text-xs font-bold text-slate-500">카테고리</label>
           <div className="flex flex-wrap gap-2 items-center">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setCategory(cat.name)}
-                className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
-                  category === cat.name
-                    ? "bg-indigo-50 text-indigo-600 border-indigo-300"
-                    : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
-                }`}
-              >
-                {cat.name}
-              </button>
+            {sortedCategories.map((cat) => (
+              <div key={cat.id} className="relative group">
+                <button
+                  type="button"
+                  onClick={() => setCategory(cat.name)}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
+                    category === cat.name
+                      ? "bg-indigo-50 text-indigo-600 border-indigo-300"
+                      : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  {cat.name}
+                </button>
+
+                {cat.name !== "일상" && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteCategory(cat.id, cat.name);
+                    }}
+                    className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-slate-400 text-white text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500"
+                    aria-label={`${cat.name} 삭제`}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
             ))}
 
             {isAddingCategory ? (
@@ -211,7 +239,10 @@ export default function AddTodoModal() {
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") handleAddCategorySubmit();
+                  if (e.key === "Enter") {
+                    e.preventDefault(); // 폼 제출/기본 동작 방지
+                    handleAddCategorySubmit();
+                  }
                   if (e.key === "Escape") {
                     setIsAddingCategory(false);
                     setNewCategoryName("");
@@ -237,7 +268,8 @@ export default function AddTodoModal() {
         {/* 하단: 선택 기간 + 버튼 */}
         <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
           <p className="text-xs text-slate-500 whitespace-nowrap">
-            📅 {startDate === endDate ? startDate : `${startDate} ~ ${endDate}`}
+            기간:{" "}
+            {startDate === endDate ? startDate : `${startDate} ~ ${endDate}`}
           </p>
           <div className="flex gap-2">
             <button

@@ -77,6 +77,25 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // 카테고리 삭제
+  const deleteCategory = async (id: number, name: string) => {
+    const inUse = todos.some((todo) => todo.category === name);
+
+    if (inUse) {
+      const confirmed = window.confirm(
+        `"${name}" 카테고리를 사용 중인 할 일이 있습니다. 그래도 삭제하시겠습니까?\n(기존 할 일은 유지되지만, 더 이상 이 카테고리를 선택할 수 없습니다)`,
+      );
+      if (!confirmed) return;
+    }
+
+    try {
+      const { error } = await supabase.from("categories").delete().eq("id", id);
+      if (error) throw error;
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
+      console.error("카테고리 삭제 실패", error);
+    }
+  };
   // 2. 새 할 일 추가하기 (CREATE) - due_date 확장 반영
   const addTodo = async (
     title: string,
@@ -228,6 +247,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
         categories,
         isCategoriesLoading,
         addCategory,
+        deleteCategory,
       }}
     >
       {children}

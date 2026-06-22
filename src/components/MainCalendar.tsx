@@ -1,17 +1,10 @@
 import { useMemo, useState } from "react";
 import { useTodos } from "../hooks/useTodos";
 import type { Todo } from "../context/TodoContext";
+import { getColorStyle } from "../constants/colorPalette";
 
 type Props = {
   onNavigate: (menu: string) => void;
-};
-
-// 카테고리별 이벤트 색상 (다른 컴포넌트들과 동일한 톤 유지)
-const categoryColors: Record<string, string> = {
-  건강: "text-emerald-600 bg-emerald-50",
-  공부: "text-blue-600 bg-blue-50",
-  업무: "text-purple-600 bg-purple-50",
-  일상: "text-amber-600 bg-amber-50",
 };
 
 function getTodayParts() {
@@ -196,10 +189,7 @@ export default function MainCalendar({ onNavigate }: Props) {
                   {visibleEvents.map((todo) => (
                     <div
                       key={todo.id}
-                      className={`text-[10px] font-bold px-1 rounded-sm truncate ${
-                        categoryColors[todo.category] ??
-                        "text-slate-500 bg-slate-50"
-                      }`}
+                      className={`text-[10px] font-bold px-1 rounded-sm truncate ${getColorStyle(todo.color)}`}
                     >
                       ● {todo.title}
                     </div>

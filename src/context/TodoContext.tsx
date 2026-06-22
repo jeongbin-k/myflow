@@ -55,6 +55,7 @@ export interface TodoContextType {
   categories: Category[];
   isCategoriesLoading: boolean;
   addCategory: (name: string) => Promise<Category | null>;
+  deleteCategory: (id: number, name: string) => Promise<void>;
 }
 
 export const TodoContext = createContext<TodoContextType | undefined>(

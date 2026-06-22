@@ -21,14 +21,6 @@ export default function TodoToday() {
   // 진행도 계산
   const completedCount = todayTodos.filter((t) => t.is_completed).length;
 
-  // 카테고리별파스텔톤 색상 매칭 맵
-  const categoryColors: Record<string, string> = {
-    건강: "bg-emerald-50 text-emerald-600",
-    공부: "bg-blue-50 text-blue-600",
-    업무: "bg-purple-50 text-purple-600",
-    일상: "bg-amber-50 text-amber-600",
-  };
-
   return (
     <div className="w-full h-[400px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
       {/* 상단 헤더 영역 */}
@@ -48,7 +40,7 @@ export default function TodoToday() {
           onClick={() => setIsModalOpen(true)}
           className="text-xs font-bold text-indigo-500 hover:text-indigo-700 transition-colors"
         >
-          + 할 일 추가
+          + 할 일 등록
         </button>
       </div>
 
@@ -108,9 +100,7 @@ export default function TodoToday() {
                 </div>
 
                 {/* 오른쪽: 카테고리 배지만 (메뉴는 카드 밖으로 뺐음) */}
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded shrink-0 ${categoryColors[todo.category] ?? "bg-slate-50 text-slate-500"}`}
-                >
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded shrink-0 bg-slate-100 text-slate-500">
                   {todo.category}
                 </span>
               </div>
