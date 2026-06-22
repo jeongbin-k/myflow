@@ -30,13 +30,21 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   };
 
   // 2. 새 할 일 추가하기 (CREATE) - due_date 확장 반영
-  const addTodo = async (title: string, category: string, dueDate?: string) => {
+  const addTodo = async (
+    title: string,
+    category: string,
+    dueDate?: string,
+    endDate?: string,
+  ) => {
     // 만약dueDate 인자가 안 넘어오면, 로컬 브라우저 타임존 기준의 오늘 날짜(YYYY-MM-DD)를 기본값으로 사용합니다.
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
     const date = String(now.getDate()).padStart(2, "0");
     const defaultTodayStr = `${year}-${month}-${date}`;
+
+    const finalStart = dueDate ?? defaultTodayStr;
+    const finalEnd = endDate ?? finalStart; // end_date 없으면 시작일과 동일(1일짜리)
 
     try {
       const { data, error } = await supabase
@@ -46,7 +54,8 @@ export function TodoProvider({ children }: { children: ReactNode }) {
             title,
             category,
             is_completed: false,
-            due_date: dueDate ?? defaultTodayStr, // 넘겨받은 날짜가 없다면 오늘 날짜 기본 할당
+            due_date: finalStart,
+            end_date: finalEnd,
           },
         ])
         .select();
@@ -97,11 +106,12 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     title: string,
     category: string,
     dueDate: string,
+    endDate: string,
   ) => {
     try {
       const { error } = await supabase
         .from("todos")
-        .update({ title, category, due_date: dueDate })
+        .update({ title, category, due_date: dueDate, end_date: endDate })
         .eq("id", id);
 
       if (error) throw error;
@@ -109,7 +119,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
       setTodos((prev) =>
         prev.map((todo) =>
           todo.id === id
-            ? { ...todo, title, category, due_date: dueDate }
+            ? { ...todo, title, category, due_date: dueDate, end_date: endDate }
             : todo,
         ),
       );
