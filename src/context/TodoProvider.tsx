@@ -16,6 +16,12 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState<boolean>(true);
 
+  // 할일 모드 무조건 오늘날짜로 들어가야해서 모달이 열릴 때 기본으로 채워질 날짜를 저장하는 state
+  const [defaultModalDate, setDefaultModalDate] = useState<string | null>(null);
+  const openModalForDate = (dateStr: string) => {
+    setDefaultModalDate(dateStr);
+    setIsModalOpen(true);
+  };
   // supabase에서 전체 투두 리스트 가져오기
   const fetchTodos = async () => {
     try {
@@ -49,6 +55,8 @@ export function TodoProvider({ children }: { children: ReactNode }) {
       setIsCategoriesLoading(false);
     }
   };
+
+  //
 
   // 새 카테고리 추가
   const addCategory = async (name: string): Promise<Category | null> => {
@@ -248,6 +256,9 @@ export function TodoProvider({ children }: { children: ReactNode }) {
         isCategoriesLoading,
         addCategory,
         deleteCategory,
+        defaultModalDate,
+        openModalForDate,
+        setDefaultModalDate,
       }}
     >
       {children}

@@ -22,6 +22,8 @@ export default function AddTodoModal() {
     categories,
     addCategory,
     deleteCategory,
+    defaultModalDate,
+    setDefaultModalDate,
   } = useTodos();
 
   const isEditMode = editingTodo !== null;
@@ -32,10 +34,13 @@ export default function AddTodoModal() {
   );
   const [color, setColor] = useState<string>(editingTodo?.color ?? "blue");
   const [startDate, setStartDate] = useState(
-    editingTodo?.due_date ?? getTodayStr(),
+    editingTodo?.due_date ?? defaultModalDate ?? getTodayStr(),
   );
   const [endDate, setEndDate] = useState(
-    editingTodo?.end_date ?? editingTodo?.due_date ?? getTodayStr(),
+    editingTodo?.end_date ??
+      editingTodo?.due_date ??
+      defaultModalDate ??
+      getTodayStr(),
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -66,6 +71,7 @@ export default function AddTodoModal() {
   const handleClose = () => {
     setIsModalOpen(false);
     setEditingTodo(null);
+    setDefaultModalDate(null);
     setIsAddingCategory(false);
     setNewCategoryName("");
   };

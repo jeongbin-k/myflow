@@ -51,6 +51,11 @@ export interface TodoContextType {
   isModalOpen: boolean;
   setIsModalOpen: (open: boolean) => void;
 
+  // 추가 (6/22)
+  defaultModalDate: string | null;
+  setDefaultModalDate: (date: string | null) => void;
+  openModalForDate: (dateStr: string) => void;
+
   // 카테고리 관리 추가 (6/22)
   categories: Category[];
   isCategoriesLoading: boolean;
