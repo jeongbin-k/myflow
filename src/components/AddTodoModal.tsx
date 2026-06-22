@@ -132,7 +132,7 @@ export default function AddTodoModal() {
         {/* 헤더: 색상 동그라미 + 제목 인풋 */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1">
-            <div className="relative" ref={colorPickerRef}>
+            <div className="relative flex" ref={colorPickerRef}>
               <button
                 type="button"
                 onClick={() => setIsColorPickerOpen((prev) => !prev)}
