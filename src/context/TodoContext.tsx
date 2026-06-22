@@ -30,6 +30,7 @@ export interface TodoContextType {
     category: string,
     due_date?: string,
     end_date?: string,
+    color?: string,
   ) => Promise<void>;
   toggleTodo: (id: number, currentStatus: boolean) => Promise<void>;
   updateTodo: (
@@ -38,6 +39,7 @@ export interface TodoContextType {
     category: string,
     dueDate: string,
     endDate: string,
+    color: string,
   ) => Promise<void>;
   deleteTodo: (id: number) => Promise<void>;
 

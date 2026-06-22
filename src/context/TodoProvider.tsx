@@ -83,6 +83,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     category: string,
     dueDate?: string,
     endDate?: string,
+    color?: string,
   ) => {
     // 만약dueDate 인자가 안 넘어오면, 로컬 브라우저 타임존 기준의 오늘 날짜(YYYY-MM-DD)를 기본값으로 사용합니다.
     const now = new Date();
@@ -104,6 +105,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
             is_completed: false,
             due_date: finalStart,
             end_date: finalEnd,
+            color: color ?? "blue",
           },
         ])
         .select();
@@ -155,11 +157,18 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     category: string,
     dueDate: string,
     endDate: string,
+    color: string,
   ) => {
     try {
       const { error } = await supabase
         .from("todos")
-        .update({ title, category, due_date: dueDate, end_date: endDate })
+        .update({
+          title,
+          category,
+          due_date: dueDate,
+          end_date: endDate,
+          color,
+        })
         .eq("id", id);
 
       if (error) throw error;
@@ -167,7 +176,14 @@ export function TodoProvider({ children }: { children: ReactNode }) {
       setTodos((prev) =>
         prev.map((todo) =>
           todo.id === id
-            ? { ...todo, title, category, due_date: dueDate, end_date: endDate }
+            ? {
+                ...todo,
+                title,
+                category,
+                due_date: dueDate,
+                end_date: endDate,
+                color,
+              }
             : todo,
         ),
       );
