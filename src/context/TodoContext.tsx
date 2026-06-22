@@ -8,7 +8,8 @@ export interface Todo {
   category: string;
   created_at: string;
   completed_at: string | null;
-  due_date: string | null;
+  due_date: string | null; // 시작일 (start_date) 역할
+  end_date: string | null; // 종료일
   updated_at: string;
 }
 // 이 Context 안에서 다른 컴포넌트들에게 "내가 어떤 데이터랑 어떤 함수들을 전역으로 제공할게라고 명시하는 목록 리스트
@@ -20,6 +21,7 @@ export interface TodoContextType {
     title: string,
     category: string,
     due_date?: string,
+    end_date?: string,
   ) => Promise<void>;
   toggleTodo: (id: number, currentStatus: boolean) => Promise<void>;
   updateTodo: (
@@ -27,6 +29,7 @@ export interface TodoContextType {
     title: string,
     category: string,
     dueDate: string,
+    endDate: string,
   ) => Promise<void>;
   deleteTodo: (id: number) => Promise<void>;
 

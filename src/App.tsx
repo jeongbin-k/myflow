@@ -14,13 +14,19 @@ import TodoRecent from "./components/TodoRecent";
 import CategoryAnalysis from "./components/CategoryAnalysis";
 // 명언
 import Quotes from "./components/Quotes";
-// 할일 추가 컴포넌트
+// 할 일 추가/등록 컴포넌트
 import AddTodoModal from "./components/AddTodoModal";
-import { useTodos } from "./hooks/useTodos";
 
+import { useTodos } from "./hooks/useTodos";
 import myflow from "./assets/images/myflow.png";
 import { useState } from "react";
-import { IconHome, IconCheckbox, IconCalendar } from "@tabler/icons-react";
+import {
+  IconHome,
+  IconCheckbox,
+  IconCalendar,
+  IconArrowBarToLeft,
+  IconArrowBarToRight,
+} from "@tabler/icons-react";
 
 // 메뉴관리
 const menus = [
@@ -54,9 +60,13 @@ export default function App() {
         {/* 접기/펼치기 토글 버튼 */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute -right-3 top-6 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-xs text-slate-500 hover:text-slate-800 hover:shadow-sm cursor-pointer z-50 transition-all"
+          className="absolute -right-3 top-4.5 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center text-xs text-slate-500 hover:text-slate-800 hover:shadow-sm cursor-pointer z-50 transition-all"
         >
-          {isSidebarOpen ? "◀" : "▶"}
+          {isSidebarOpen ? (
+            <IconArrowBarToLeft stroke={2} size={20} />
+          ) : (
+            <IconArrowBarToRight stroke={2} size={20} />
+          )}
         </button>
 
         <div>
