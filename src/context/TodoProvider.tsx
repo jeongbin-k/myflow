@@ -1,7 +1,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { supabase } from "../supabaseClient";
 import { TodoContext } from "./TodoContext";
-import type { Todo } from "./TodoContext";
+import type { Todo, Category } from "./TodoContext";
 
 export function TodoProvider({ children }: { children: ReactNode }) {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -12,7 +12,11 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   // 모달 상태 추가
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  // 1. supabase에서 전체 투두 리스트 가져오기
+  // 카테고리 상태 추가
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState<boolean>(true);
+
+  // supabase에서 전체 투두 리스트 가져오기
   const fetchTodos = async () => {
     try {
       const { data, error } = await supabase
@@ -26,6 +30,50 @@ export function TodoProvider({ children }: { children: ReactNode }) {
       console.error("데이터를 불러오지 못했습니다.", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // supabase에서 카테고리 목록 가져오기
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) throw error;
+      if (data) setCategories(data);
+    } catch (error) {
+      console.error("카테고리를 불러오지 못했습니다.", error);
+    } finally {
+      setIsCategoriesLoading(false);
+    }
+  };
+
+  // 새 카테고리 추가
+  const addCategory = async (name: string): Promise<Category | null> => {
+    const trimmed = name.trim();
+    if (!trimmed) return null;
+
+    // 이미 있는 이름이면 그냥 기존 카테고리 반환 (중복 추가 방지)
+    const existing = categories.find((c) => c.name === trimmed);
+    if (existing) return existing;
+
+    try {
+      const { data, error } = await supabase
+        .from("categories")
+        .insert([{ name: trimmed }])
+        .select();
+
+      if (error) throw error;
+      if (data && data[0]) {
+        setCategories((prev) => [...prev, data[0]]);
+        return data[0];
+      }
+      return null;
+    } catch (error) {
+      console.error("카테고리 추가 실패", error);
+      return null;
     }
   };
 
@@ -144,6 +192,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTodos();
+    fetchCategories();
   }, []);
 
   return (
@@ -160,6 +209,9 @@ export function TodoProvider({ children }: { children: ReactNode }) {
         deleteTodo,
         editingTodo,
         setEditingTodo,
+        categories,
+        isCategoriesLoading,
+        addCategory,
       }}
     >
       {children}
