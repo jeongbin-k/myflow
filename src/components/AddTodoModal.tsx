@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTodos } from "../hooks/useTodos";
+import DateRangeCalendar from "./DateRangeCalendar";
 
 const categories = ["건강", "공부", "업무", "일상"] as const;
 
@@ -34,8 +35,11 @@ export default function AddTodoModal() {
   const [category, setCategory] = useState<string>(
     editingTodo?.category ?? "일상",
   );
-  const [dueDate, setDueDate] = useState(
+  const [startDate, setStartDate] = useState(
     editingTodo?.due_date ?? getTodayStr(),
+  );
+  const [endDate, setEndDate] = useState(
+    editingTodo?.end_date ?? editingTodo?.due_date ?? getTodayStr(),
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,7 +47,7 @@ export default function AddTodoModal() {
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setEditingTodo(null); // 닫을 때 수정 모드 초기화
+    setEditingTodo(null);
   };
 
   const handleSubmit = async () => {
@@ -52,9 +56,15 @@ export default function AddTodoModal() {
     setIsSubmitting(true);
     try {
       if (isEditMode && editingTodo) {
-        await updateTodo(editingTodo.id, title.trim(), category, dueDate);
+        await updateTodo(
+          editingTodo.id,
+          title.trim(),
+          category,
+          startDate,
+          endDate,
+        );
       } else {
-        await addTodo(title.trim(), category, dueDate);
+        await addTodo(title.trim(), category, startDate, endDate);
       }
       handleClose();
     } finally {
@@ -69,11 +79,11 @@ export default function AddTodoModal() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-xl w-[400px] p-6 flex flex-col gap-5"
+        className="bg-white rounded-2xl shadow-xl w-[500px] p-6 flex flex-col gap-5"
       >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-slate-800">
-            {isEditMode ? "할 일 수정" : "새 할 일 추가"}
+            {isEditMode ? "할 일 수정" : "할 일 등록"}
           </h2>
           <button
             onClick={handleClose}
@@ -89,7 +99,7 @@ export default function AddTodoModal() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="할 일을 입력하세요"
+            placeholder="일정 제목"
             autoFocus
             className="border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
             onKeyDown={(e) => {
@@ -118,29 +128,49 @@ export default function AddTodoModal() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-bold text-slate-500">날짜</label>
-          <input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            className="border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400"
+          <label className="text-xs font-bold text-slate-500">기간</label>
+          <DateRangeCalendar
+            startDate={startDate}
+            endDate={endDate}
+            onChange={(s, e) => {
+              setStartDate(s);
+              setEndDate(e);
+            }}
           />
         </div>
 
-        <div className="flex gap-2 mt-2">
-          <button
-            onClick={handleClose}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors"
-          >
-            취소
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!title.trim() || isSubmitting}
-            className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
-          >
-            {isSubmitting ? "처리 중..." : isEditMode ? "수정하기" : "추가하기"}
-          </button>
+        <div className="flex items-center justify-between gap-3 mt-2">
+          <p className="text-xs text-slate-500 whitespace-nowrap">
+            기간:
+            <span className="font-bold pl-1">{startDate}</span>
+            {startDate !== endDate && (
+              <>
+                {" ~ "}
+
+                <span className="font-bold ">{endDate}</span>
+              </>
+            )}
+          </p>
+
+          <div className="flex gap-2">
+            <button
+              onClick={handleClose}
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors"
+            >
+              취소
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={!title.trim() || isSubmitting}
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
+            >
+              {isSubmitting
+                ? "처리 중..."
+                : isEditMode
+                  ? "수정하기"
+                  : "등록하기"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

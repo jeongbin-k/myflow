@@ -138,101 +138,100 @@ export default function DateRangeCalendar({
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* 월 이동 헤더 */}
-      <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={handlePrevMonth}
-          className="px-2 py-1 text-slate-400 hover:text-slate-700 text-sm font-bold"
-        >
-          &lt;
-        </button>
-        <span className="text-sm font-bold text-slate-700">
-          {viewYear}년 {viewMonth}월
-        </span>
-        <button
-          type="button"
-          onClick={handleNextMonth}
-          className="px-2 py-1 text-slate-400 hover:text-slate-700 text-sm font-bold"
-        >
-          &gt;
-        </button>
-      </div>
-
-      {/* 요일 헤더 */}
-      <div className="grid grid-cols-7 text-center text-[11px] font-semibold text-slate-400">
-        {weekdays.map((wd, i) => (
-          <div
-            key={i}
-            className={
-              wd === "일"
-                ? "text-red-400"
-                : wd === "토"
-                  ? "text-indigo-400"
-                  : ""
-            }
+    <div className="flex gap-6">
+      {/* 좌측: 캘린더 그리드 (넓게) */}
+      <div className="flex flex-col gap-3 flex-1 min-w-0">
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={handlePrevMonth}
+            className="px-2 py-1 text-slate-400 hover:text-slate-700 text-sm font-bold"
           >
-            {wd}
-          </div>
-        ))}
-      </div>
+            &lt;
+          </button>
+          <span className="text-sm font-bold text-slate-700">
+            {viewYear}년 {viewMonth}월
+          </span>
+          <button
+            type="button"
+            onClick={handleNextMonth}
+            className="px-2 py-1 text-slate-400 hover:text-slate-700 text-sm font-bold"
+          >
+            &gt;
+          </button>
+        </div>
 
-      {/* 날짜 그리드 */}
-      <div
-        className="grid grid-cols-7 gap-y-1"
-        onMouseLeave={() => setHoverDate(null)}
-      >
-        {days.map((item, idx) => {
-          if (!item.dateStr) return <div key={idx} />;
-
-          const state = getDayState(item.dateStr);
-
-          return (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => handleDayClick(item.dateStr)}
-              onMouseEnter={() =>
-                !isRangeComplete && setHoverDate(item.dateStr)
+        <div className="grid grid-cols-7 text-center text-[11px] font-semibold text-slate-400">
+          {weekdays.map((wd, i) => (
+            <div
+              key={i}
+              className={
+                wd === "일"
+                  ? "text-red-400"
+                  : wd === "토"
+                    ? "text-indigo-400"
+                    : ""
               }
-              className={`relative h-8 text-xs font-medium transition-colors
+            >
+              {wd}
+            </div>
+          ))}
+        </div>
+
+        <div
+          className="grid grid-cols-7 gap-y-1.5"
+          onMouseLeave={() => setHoverDate(null)}
+        >
+          {days.map((item, idx) => {
+            if (!item.dateStr) return <div key={idx} />;
+            const state = getDayState(item.dateStr);
+
+            return (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleDayClick(item.dateStr)}
+                onMouseEnter={() =>
+                  !isRangeComplete && setHoverDate(item.dateStr)
+                }
+                className={`relative h-9 text-xs font-medium transition-colors
                 ${state.inRange ? "bg-indigo-50" : ""}
                 ${state.isStart ? "rounded-l-full" : ""}
                 ${state.isEnd ? "rounded-r-full" : ""}
               `}
-            >
-              <span
-                className={`w-8 h-8 flex items-center justify-center rounded-full mx-auto
+              >
+                <span
+                  className={`w-9 h-9 flex items-center justify-center rounded-full mx-auto
                   ${state.isStart || state.isEnd ? "bg-indigo-600 text-white" : "text-slate-700"}
                   ${state.isToday && !state.isStart && !state.isEnd ? "border border-indigo-400" : ""}
                 `}
-              >
-                {item.day}
-              </span>
-            </button>
-          );
-        })}
+                >
+                  {item.day}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Start / End 직접 입력 */}
-      <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
-        <div className="flex flex-col gap-1">
-          <label className="text-[11px] font-bold text-slate-500">시작일</label>
+      {/* 우측: Start/End 인풋만 */}
+      <div className="w-[180px] flex flex-col gap-4 shrink-0 border-l border-slate-100 pl-5">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-bold text-slate-500">시작일</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => handleStartInputChange(e.target.value)}
-            className="border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-indigo-400"
+            className="border border-slate-200 rounded-lg px-2 py-2 text-xs focus:outline-none focus:border-indigo-400 w-full"
           />
         </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-[11px] font-bold text-slate-500">종료일</label>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-bold text-slate-500">종료일</label>
           <input
             type="date"
             value={endDate}
             onChange={(e) => handleEndInputChange(e.target.value)}
-            className="border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-indigo-400"
+            className="border border-slate-200 rounded-lg px-2 py-2 text-xs focus:outline-none focus:border-indigo-400 w-full"
           />
         </div>
       </div>
