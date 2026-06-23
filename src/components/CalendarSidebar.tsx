@@ -23,44 +23,32 @@ export default function CalendarSidebar({
     <div className="w-72 shrink-0 h-full flex flex-col pl-5">
       {/* 헤더 */}
       <div className="mb-4 shrink-0">
-        <h3 className="text-base font-bold text-slate-800">
-          {dateStr ? formatDateLabel(dateStr) : "날짜를 선택하세요"}
+        <h3 className="text-sm font-bold text-slate-800">
+          {dateStr ? formatDateLabel(dateStr) : null}
         </h3>
       </div>
 
       {/* 일정 리스트 */}
       <div className="flex-1 overflow-y-auto flex flex-col gap-2">
-        {!dateStr ? (
-          <p className="text-sm text-slate-400 mt-4 text-center">
-            캘린더에서 날짜를 클릭하면
-            <br />
-            그날의 일정이 여기 표시됩니다.
-          </p>
-        ) : todos.length === 0 ? (
-          <p className="text-sm text-slate-400 mt-4 text-center">
-            일정이 없습니다.
-          </p>
-        ) : (
-          todos.map((todo) => (
-            <button
-              key={todo.id}
-              onClick={() => onSelectTodo(todo)}
-              className="flex items-stretch gap-2.5 rounded-lg border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-colors text-left p-2.5"
-            >
+        {todos.map((todo) => (
+          <button
+            key={todo.id}
+            onClick={() => onSelectTodo(todo)}
+            className="flex items-stretch gap-2.5 rounded-lg border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-colors text-left p-2.5"
+          >
+            <span
+              className={`w-1 rounded-full shrink-0 ${getColorDot(todo.color)}`}
+            />
+            <div className="flex flex-col gap-0.5 min-w-0">
               <span
-                className={`w-1 rounded-full shrink-0 ${getColorDot(todo.color)}`}
-              />
-              <div className="flex flex-col gap-0.5 min-w-0">
-                <span
-                  className={`text-sm  truncate ${todo.is_completed ? "text-slate-400 line-through" : "text-slate-700"}`}
-                >
-                  {todo.title}
-                </span>
-                <span className="text-xs text-slate-400">{todo.category}</span>
-              </div>
-            </button>
-          ))
-        )}
+                className={`text-sm  truncate ${todo.is_completed ? "text-slate-400 line-through" : "text-slate-700"}`}
+              >
+                {todo.title}
+              </span>
+              <span className="text-xs text-slate-400">{todo.category}</span>
+            </div>
+          </button>
+        ))}
       </div>
     </div>
   );
