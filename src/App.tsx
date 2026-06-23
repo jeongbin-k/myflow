@@ -16,6 +16,8 @@ import CategoryAnalysis from "./components/CategoryAnalysis";
 import Quotes from "./components/Quotes";
 // 할 일 추가/등록 컴포넌트
 import AddTodoModal from "./components/AddTodoModal";
+// 캘린더페이지
+import CalendarPage from "./pages/CalendarPage";
 
 import { useTodos } from "./hooks/useTodos";
 import myflow from "./assets/images/myflow.png";
@@ -130,62 +132,63 @@ export default function App() {
         id="dashboard-scroll-area"
         className="flex-1 h-full overflow-y-auto p-8"
       >
-        {/* 상단 헤더 */}
-        <header className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-              안녕하세요, JeongBin님! 👋
-            </h1>
-            <p className="text-sm text-slate-500 mt-1">
-              오늘도 멋진 하루를 만들어가요.
-            </p>
-          </div>
-          <button
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1 "
-            onClick={() => setIsModalOpen(true)}
-          >
-            <span>+</span> 할 일 등록
-          </button>
-        </header>
+        {currentMenu === "dashboard" && (
+          <>
+            <header className="flex justify-between items-center mb-8">
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                  안녕하세요, JeongBin님! 👋
+                </h1>
+                <p className="text-sm text-slate-500 mt-1">
+                  오늘도 멋진 하루를 만들어가요.
+                </p>
+              </div>
+              <button
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1 "
+                onClick={() => setIsModalOpen(true)}
+              >
+                <span>+</span> 할 일 등록
+              </button>
+            </header>
 
-        {/*  대시보드 3층 레이아웃 컨테이너 */}
-        <div className="space-y-6">
-          {/* [1층]: 달력(2/4) + 도넛(1/4) + 막대(1/4) */}
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-            <div className="xl:col-span-7">
-              <MainCalendar onNavigate={setCurrentMenu} />
-            </div>
-            <div className="xl:col-span-2">
-              <ProgressDonut />
-            </div>
-            <div className="xl:col-span-3">
-              <WeeklyBar />
-            </div>
-          </div>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                <div className="xl:col-span-7">
+                  <MainCalendar onNavigate={setCurrentMenu} />
+                </div>
+                <div className="xl:col-span-2">
+                  <ProgressDonut />
+                </div>
+                <div className="xl:col-span-3">
+                  <WeeklyBar />
+                </div>
+              </div>
 
-          {/* [2층]: 오늘 할 일(1/3) + 완료 추이(1/3) + 최근 완료(1/3)*/}
-          <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
-            <div className="xl:col-span-3">
-              <TodoToday />
-            </div>
-            <div className="xl:col-span-4">
-              <TodoTrend />
-            </div>
-            <div className="xl:col-span-3">
-              <TodoRecent />
-            </div>
-          </div>
+              <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
+                <div className="xl:col-span-3">
+                  <TodoToday />
+                </div>
+                <div className="xl:col-span-4">
+                  <TodoTrend />
+                </div>
+                <div className="xl:col-span-3">
+                  <TodoRecent />
+                </div>
+              </div>
 
-          {/* [3층]: 카텍고리 분석 도넛 차트 / 오늘의 명언 */}
-          <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
-            <div className="xl:col-span-3">
-              <CategoryAnalysis />
+              <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
+                <div className="xl:col-span-3">
+                  <CategoryAnalysis />
+                </div>
+                <div className="xl:col-span-7">
+                  <Quotes />
+                </div>
+              </div>
             </div>
-            <div className="xl:col-span-7">
-              <Quotes />
-            </div>
-          </div>
-        </div>
+          </>
+        )}
+
+        {currentMenu === "calendar" && <CalendarPage />}
       </main>
     </div>
   );
