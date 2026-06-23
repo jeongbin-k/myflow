@@ -144,7 +144,7 @@ export default function App() {
                 </p>
               </div>
               <button
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1 "
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1 "
                 onClick={() => setIsModalOpen(true)}
               >
                 <span>+</span> 할 일 등록

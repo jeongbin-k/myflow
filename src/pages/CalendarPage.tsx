@@ -131,7 +131,7 @@ export default function CalendarPage() {
         {/* 헤더: 월 이동 */}
         <div className="flex items-center justify-between mb-4 shrink-0 pr-1">
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold text-slate-800">
+            <h2 className="text-xl font-bold text-slate-800">
               {viewYear}년 {viewMonth}월
             </h2>
             <div className="flex items-center gap-1">
@@ -156,9 +156,8 @@ export default function CalendarPage() {
               onChange={(e) => setViewMode(e.target.value as "month" | "week")}
               className="text-xs font-semibold text-slate-600 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 cursor-pointer outline-none"
             >
-              <option value="month">Month</option>
-              <option value="week">Week</option>
-              <option value="day">Day</option>
+              <option value="month">Month View</option>
+              <option value="week">Week View</option>
             </select>
             <button
               onClick={handleToday}
