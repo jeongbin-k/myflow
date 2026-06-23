@@ -50,7 +50,7 @@ export default function CategoryAnalysis() {
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-between min-h-0">
-          <div className="w-[45%] h-full min-w-0">
+          <div className="w-[50%] h-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -79,7 +79,7 @@ export default function CategoryAnalysis() {
             </ResponsiveContainer>
           </div>
 
-          <div className="w-[50%] flex flex-col gap-2.5">
+          <div className="w-[45%] flex flex-col gap-2.5">
             {chartData.map((item) => (
               <div
                 key={item.name}
