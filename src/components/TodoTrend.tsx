@@ -55,7 +55,7 @@ export default function TodoTrend() {
   }, [todos, range]);
 
   return (
-    <div className="w-full h-[400px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+    <div className="w-full h-[400px] bg-white border border-slate-100 rounded-2xl p-6 flex flex-col justify-between">
       <div className="w-full flex justify-between items-center shrink-0 mb-6">
         <h3 className="text-base font-bold text-slate-800 tracking-tight">
           할 일 완료 추이

@@ -22,7 +22,7 @@ export default function TodoToday() {
   const completedCount = todayTodos.filter((t) => t.is_completed).length;
 
   return (
-    <div className="w-full h-[400px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+    <div className="w-full h-[400px] bg-white border border-slate-100 rounded-2xl p-6 flex flex-col justify-between">
       {/* 상단 헤더 영역 */}
       <div className="flex justify-between items-center mb-4 shrink-0">
         <div className="flex items-center gap-2">

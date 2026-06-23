@@ -41,7 +41,7 @@ export default function ProgressDonut() {
     circumference - (animatedPercentage / 100) * circumference;
 
   return (
-    <div className="w-full h-[440px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between items-center text-center">
+    <div className="w-full h-[440px] bg-white border border-slate-100 rounded-2xl p-6 flex flex-col justify-between items-center text-center">
       <div className="w-full text-left shrink-0">
         <h3 className="text-base font-bold text-slate-800 tracking-tight">
           오늘의 진행률

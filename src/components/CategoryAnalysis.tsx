@@ -33,7 +33,7 @@ export default function CategoryAnalysis() {
   const hasData = totalCount > 0;
 
   return (
-    <div className="w-full h-[280px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+    <div className="w-full h-[280px] bg-white border border-slate-100 rounded-2xl p-6  flex flex-col justify-between">
       <div className="shrink-0 mb-2">
         <h3 className="text-base font-bold text-slate-800 tracking-tight">
           카테고리 분석

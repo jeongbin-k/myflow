@@ -33,7 +33,7 @@ export default function Quotes() {
 
   return (
     // 🎨 변경 포인트 1: bg-white 대신 연한 인디고 틴트 배경을 깔아 허전한 여백을 공간감으로 채웁니다.
-    <div className="w-full h-[280px] bg-gradient-to-br from-indigo-50/20 via-slate-50/40 to-white border border-slate-100 rounded-2xl p-8 shadow-sm flex relative overflow-hidden group justify-between items-center">
+    <div className="w-full h-[280px] bg-gradient-to-br from-indigo-50/20 via-slate-50/40 to-white border border-slate-100 rounded-2xl p-8  flex relative overflow-hidden group justify-between items-center">
       {/* 🌌 변경 포인트 2: 우측 일러스트 영역의 크기와 그라데이션 범위를 45%로 넓히고 색감을 살렸습니다. */}
       <div className="absolute right-0 bottom-0 top-0 w-[45%] bg-gradient-to-l from-indigo-100/50 via-purple-50/30 to-transparent pointer-events-none rounded-r-2xl transition-all duration-700" />
 

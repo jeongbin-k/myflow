@@ -23,7 +23,7 @@ export default function TodoRecent() {
     .slice(0, 6);
 
   return (
-    <div className="w-full h-[400px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+    <div className="w-full h-[400px] bg-white border border-slate-100 rounded-2xl p-6 flex flex-col justify-between">
       {/* 상단 헤더 영역 */}
       <div className="flex justify-between items-center mb-2 shrink-0">
         <h3 className="text-base font-bold text-slate-800 tracking-tight">

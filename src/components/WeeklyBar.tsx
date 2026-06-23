@@ -91,7 +91,7 @@ export default function WeeklyBarChart() {
   const { weeklyData, averagePercentage } = getWeeklyStats();
 
   return (
-    <div className="w-full h-[440px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+    <div className="w-full h-[440px] bg-white border border-slate-100 rounded-2xl p-6 flex flex-col justify-between">
       {/* 상단 타이틀 및 평균 브리핑 영역 */}
       <div className="w-full shrink-0 flex flex-col gap-1 text-left">
         <h3 className="text-base font-bold text-slate-800 tracking-tight">

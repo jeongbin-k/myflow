@@ -69,7 +69,7 @@ export default function MainCalendar({ onNavigate }: Props) {
   };
 
   return (
-    <div className="w-full h-[440px] bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col">
+    <div className="w-full h-[440px] bg-white border border-slate-100 rounded-2xl p-6  flex flex-col">
       {/* 헤더: 월 이동 */}
       <div className="flex items-center justify-between mb-4 shrink-0">
         <div className="flex items-center gap-3">
