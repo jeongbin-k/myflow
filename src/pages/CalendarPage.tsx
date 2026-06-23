@@ -6,7 +6,7 @@ import {
   chunkIntoWeeks,
   layoutEventsForWeek,
 } from "../utils/calendarLayout";
-import { getColorStyle } from "../constants/colorPalette";
+import { getColorDot } from "../constants/colorPalette";
 import CalendarSidebar from "../components/CalendarSidebar";
 
 function getTodayParts() {
@@ -28,40 +28,69 @@ const MAX_VISIBLE_LANES = 3;
 export default function CalendarPage() {
   const { todos, setEditingTodo, setIsModalOpen, openModalForDate } =
     useTodos();
+
   const today = getTodayParts();
+  const todayStr = `${today.year}-${String(today.month).padStart(2, "0")}-${String(today.day).padStart(2, "0")}`;
 
   const [viewYear, setViewYear] = useState(today.year);
   const [viewMonth, setViewMonth] = useState(today.month);
 
-  // 현재 선택된(클릭된) 날짜. null이면 아무 날짜도 선택 안 됨.
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  // 현재 선택된(클릭된) 날짜. defualt 오늘날짜
+  const [selectedDate, setSelectedDate] = useState<string | null>(todayStr);
+
+  // viewMode state
+  const [viewMode, setViewMode] = useState<"month" | "week">("month");
 
   const monthDays = generateMonthGrid(viewYear, viewMonth);
   const weeks = chunkIntoWeeks(monthDays);
 
-  const todayStr = `${today.year}-${String(today.month).padStart(2, "0")}-${String(today.day).padStart(2, "0")}`;
+  const shiftDateByDays = (dateStr: string, days: number) => {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const date = new Date(y, m - 1, d + days);
+    const ny = date.getFullYear();
+    const nm = String(date.getMonth() + 1).padStart(2, "0");
+    const nd = String(date.getDate()).padStart(2, "0");
+    return `${ny}-${nm}-${nd}`;
+  };
 
-  const handlePrevMonth = () => {
-    if (viewMonth === 1) {
-      setViewYear((y) => y - 1);
-      setViewMonth(12);
+  const handlePrev = () => {
+    if (viewMode === "week") {
+      const newDate = shiftDateByDays(selectedDate ?? todayStr, -7);
+      const [ny, nm] = newDate.split("-").map(Number);
+      setSelectedDate(newDate);
+      setViewYear(ny);
+      setViewMonth(nm);
     } else {
-      setViewMonth((m) => m - 1);
+      if (viewMonth === 1) {
+        setViewYear((y) => y - 1);
+        setViewMonth(12);
+      } else {
+        setViewMonth((m) => m - 1);
+      }
     }
   };
 
-  const handleNextMonth = () => {
-    if (viewMonth === 12) {
-      setViewYear((y) => y + 1);
-      setViewMonth(1);
+  const handleNext = () => {
+    if (viewMode === "week") {
+      const newDate = shiftDateByDays(selectedDate ?? todayStr, 7);
+      const [ny, nm] = newDate.split("-").map(Number);
+      setSelectedDate(newDate);
+      setViewYear(ny);
+      setViewMonth(nm);
     } else {
-      setViewMonth((m) => m + 1);
+      if (viewMonth === 12) {
+        setViewYear((y) => y + 1);
+        setViewMonth(1);
+      } else {
+        setViewMonth((m) => m + 1);
+      }
     }
   };
 
   const handleToday = () => {
     setViewYear(today.year);
     setViewMonth(today.month);
+    setSelectedDate(todayStr);
   };
 
   // 날짜 칸 클릭: 처음 클릭이면 선택, 이미 선택된 날짜를 또 클릭하면 추가모달
@@ -100,31 +129,43 @@ export default function CalendarPage() {
       {/* 캘린더 영역 */}
       <div className="flex flex-col flex-1 h-full min-w-0">
         {/* 헤더: 월 이동 */}
-        <div className="flex items-center justify-between mb-4 shrink-0">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between mb-4 shrink-0 pr-1">
+          <div className="flex items-center gap-3">
             <h2 className="text-2xl font-bold text-slate-800">
               {viewYear}년 {viewMonth}월
             </h2>
-            <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
+            <div className="flex items-center gap-1">
               <button
-                onClick={handlePrevMonth}
-                className="px-3 py-1.5 text-slate-500 hover:bg-slate-200 text-sm font-semibold transition-all"
+                onClick={handlePrev}
+                className="w-7 h-7 flex items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 text-sm font-semibold transition-colors"
               >
                 &lt;
               </button>
               <button
-                onClick={handleNextMonth}
-                className="px-3 py-1.5 text-slate-500 hover:bg-slate-200 text-sm font-semibold transition-all"
+                onClick={handleNext}
+                className="w-7 h-7 flex items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 text-sm font-semibold transition-colors"
               >
                 &gt;
               </button>
-              <button
-                onClick={handleToday}
-                className="px-3 py-1.5 text-xs text-slate-600 border-x border-slate-200 font-medium"
-              >
-                오늘
-              </button>
             </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <select
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value as "month" | "week")}
+              className="text-xs font-semibold text-slate-600 border border-slate-200 rounded-lg px-2 py-1.5 bg-slate-50 cursor-pointer outline-none"
+            >
+              <option value="month">Month</option>
+              <option value="week">Week</option>
+              <option value="day">Day</option>
+            </select>
+            <button
+              onClick={handleToday}
+              className="px-3 py-1.5 text-xs text-slate-600 border border-slate-200 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+            >
+              Today
+            </button>
           </div>
         </div>
 
@@ -148,102 +189,126 @@ export default function CalendarPage() {
 
         {/* 6주 그리드 */}
         <div className="flex-1 flex flex-col">
-          {weeks.map((week, weekIdx) => {
-            const eventBars = layoutEventsForWeek(week, todos);
-            const visibleBars = eventBars.filter(
-              (bar) => bar.lane < MAX_VISIBLE_LANES,
-            );
+          {(() => {
+            const visibleWeeks =
+              viewMode === "week" && selectedDate
+                ? weeks.filter((week) =>
+                    week.some((cell) => cell.dateStr === selectedDate),
+                  )
+                : weeks;
 
-            return (
-              <div
-                key={weekIdx}
-                className="relative grid grid-cols-7 flex-1 border-b border-slate-100 last:border-b-0"
-              >
-                {/* 날짜 숫자 + 클릭 영역 레이어 */}
-                {week.map((cell, cellIdx) => {
-                  const isToday = cell.dateStr === todayStr;
-                  const isSelected = cell.dateStr === selectedDate;
-                  const isSunday = cellIdx === 0;
-                  const isSaturday = cellIdx === 6;
+            return visibleWeeks.map((week, weekIdx) => {
+              const eventBars = layoutEventsForWeek(week, todos);
+              const visibleBars = eventBars.filter(
+                (bar) => bar.lane < MAX_VISIBLE_LANES,
+              );
 
-                  const totalForDay = eventBars.filter((bar) => {
-                    const barStartDate = week[bar.startCol].dateStr;
-                    const barEndDate =
-                      week[bar.startCol + bar.span - 1].dateStr;
-                    return (
-                      cell.dateStr >= barStartDate && cell.dateStr <= barEndDate
-                    );
-                  }).length;
-                  const hiddenCount = totalForDay - MAX_VISIBLE_LANES;
+              return (
+                <div
+                  key={weekIdx}
+                  className="relative grid grid-cols-7 flex-1 border-b border-slate-100 last:border-b-0"
+                >
+                  {/* 날짜 숫자 + 클릭 영역 레이어 */}
+                  {week.map((cell, cellIdx) => {
+                    const isToday = cell.dateStr === todayStr;
+                    const isSelected = cell.dateStr === selectedDate;
+                    const isSunday = cellIdx === 0;
+                    const isSaturday = cellIdx === 6;
 
-                  return (
-                    <div
-                      key={cellIdx}
-                      onClick={() => handleCellClick(cell.dateStr)}
-                      className={`border-slate-100 p-2 flex flex-col items-start min-h-[100px] cursor-pointer transition-colors ${
-                        cellIdx !== 6 ? "border-r" : ""
-                      } ${
-                        isSelected ? "bg-slate-100" : "hover:bg-slate-50/60"
-                      }`}
-                    >
-                      <span
-                        className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full
-                          ${cell.type !== "current" ? "text-slate-300" : "text-slate-700"}
-                          ${cell.type === "current" && isSunday ? "text-red-500" : ""}
-                          ${cell.type === "current" && isSaturday ? "text-indigo-500" : ""}
-                          ${isToday ? "bg-indigo-600 !text-white" : ""}
-                        `}
-                      >
-                        {cell.day}
-                      </span>
-
-                      {hiddenCount > 0 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedDate(cell.dateStr);
-                          }}
-                          className="text-[10px] text-indigo-400 hover:text-indigo-600 font-semibold transition-colors"
-                          style={{
-                            marginTop: `${LANES_TOP_OFFSET + MAX_VISIBLE_LANES * (LANE_HEIGHT + LANE_GAP) - 32}px`,
-                          }}
-                        >
-                          +{hiddenCount}건
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-
-                {/* 이벤트 바 레이어 */}
-                <div className="absolute inset-0 pointer-events-none">
-                  {visibleBars.map((bar) => {
-                    const leftPct = (bar.startCol / 7) * 100;
-                    const widthPct = (bar.span / 7) * 100;
-                    const top =
-                      LANES_TOP_OFFSET + bar.lane * (LANE_HEIGHT + LANE_GAP);
+                    const totalForDay = eventBars.filter((bar) => {
+                      const barStartDate = week[bar.startCol].dateStr;
+                      const barEndDate =
+                        week[bar.startCol + bar.span - 1].dateStr;
+                      return (
+                        cell.dateStr >= barStartDate &&
+                        cell.dateStr <= barEndDate
+                      );
+                    }).length;
+                    const hiddenCount = totalForDay - MAX_VISIBLE_LANES;
 
                     return (
                       <div
-                        key={`${bar.todo.id}-${bar.startCol}`}
-                        onClick={(e) => handleEventClick(e, bar.todo)}
-                        title={bar.todo.title}
-                        className={`absolute pointer-events-auto cursor-pointer truncate rounded-md border px-1 text-[11px] font-semibold leading-[18px] hover:brightness-95 transition-[filter] ${getColorStyle(bar.todo.color)}`}
-                        style={{
-                          left: `calc(${leftPct}% + 2px)`,
-                          width: `calc(${widthPct}% - 4px)`,
-                          top: `${top}px`,
-                          height: `${LANE_HEIGHT}px`,
-                        }}
+                        key={cellIdx}
+                        onClick={() => handleCellClick(cell.dateStr)}
+                        className="relative border-r border-slate-100 last:border-r-0 p-2 flex flex-col items-start min-h-[100px] cursor-pointer hover:bg-slate-50/60 transition-colors"
                       >
-                        {bar.todo.title}
+                        <span
+                          className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full
+      ${cell.type !== "current" ? "text-slate-300" : "text-slate-700"}
+      ${cell.type === "current" && isSunday ? "text-red-500" : ""}
+      ${cell.type === "current" && isSaturday ? "text-indigo-500" : ""}
+      ${isToday ? "bg-indigo-600 !text-white" : ""}
+    `}
+                        >
+                          {cell.day}
+                        </span>
+
+                        {hiddenCount > 0 && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedDate(cell.dateStr);
+                            }}
+                            className="text-[10px] text-indigo-400 hover:text-indigo-600 font-semibold transition-colors"
+                            style={{
+                              marginTop: `${LANES_TOP_OFFSET + MAX_VISIBLE_LANES * (LANE_HEIGHT + LANE_GAP) - 32}px`,
+                            }}
+                          >
+                            +{hiddenCount}건
+                          </button>
+                        )}
+
+                        {isSelected && (
+                          <>
+                            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-indigo-100/80 pointer-events-none" />
+                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-indigo-600" />
+                          </>
+                        )}
                       </div>
                     );
                   })}
+
+                  {/* 이벤트 바 레이어 */}
+                  <div className="absolute inset-0 pointer-events-none">
+                    {visibleBars.map((bar) => {
+                      const leftPct = (bar.startCol / 7) * 100;
+                      const widthPct = (bar.span / 7) * 100;
+                      const top =
+                        LANES_TOP_OFFSET + bar.lane * (LANE_HEIGHT + LANE_GAP);
+
+                      return (
+                        <div
+                          key={`${bar.todo.id}-${bar.startCol}`}
+                          onClick={(e) => handleEventClick(e, bar.todo)}
+                          title={bar.todo.title}
+                          className="absolute pointer-events-auto cursor-pointer flex items-center gap-1.5 rounded-md bg-slate-100 px-1.5 hover:bg-slate-200 transition-colors"
+                          style={{
+                            left: `calc(${leftPct}% + 2px)`,
+                            width: `calc(${widthPct}% - 4px)`,
+                            top: `${top}px`,
+                            height: `${LANE_HEIGHT}px`,
+                          }}
+                        >
+                          <span
+                            className={`w-0.5 h-3 rounded-full shrink-0 ${getColorDot(bar.todo.color)}`}
+                          />
+                          <span
+                            className={`truncate text-[11px] leading-none ${
+                              bar.todo.is_completed
+                                ? "text-slate-400 line-through"
+                                : "text-slate-700"
+                            }`}
+                          >
+                            {bar.todo.title}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            });
+          })()}
         </div>
       </div>
 

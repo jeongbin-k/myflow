@@ -29,7 +29,7 @@ export default function CalendarSidebar({
       </div>
 
       {/* 일정 리스트 */}
-      <div className="flex-1 overflow-y-auto flex flex-col gap-1">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-2">
         {!dateStr ? (
           <p className="text-sm text-slate-400 mt-4 text-center">
             캘린더에서 날짜를 클릭하면
@@ -45,16 +45,19 @@ export default function CalendarSidebar({
             <button
               key={todo.id}
               onClick={() => onSelectTodo(todo)}
-              className="flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-slate-50 text-left transition-colors"
+              className="flex items-stretch gap-2.5 rounded-lg border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-colors text-left p-2.5"
             >
               <span
-                className={`w-2.5 h-2.5 rounded-full shrink-0 ${getColorDot(todo.color)}`}
+                className={`w-1 rounded-full shrink-0 ${getColorDot(todo.color)}`}
               />
-              <span
-                className={`text-sm truncate ${todo.is_completed ? "text-slate-400 line-through" : "text-slate-700"}`}
-              >
-                {todo.title}
-              </span>
+              <div className="flex flex-col gap-0.5 min-w-0">
+                <span
+                  className={`text-sm  truncate ${todo.is_completed ? "text-slate-400 line-through" : "text-slate-700"}`}
+                >
+                  {todo.title}
+                </span>
+                <span className="text-xs text-slate-400">{todo.category}</span>
+              </div>
             </button>
           ))
         )}
