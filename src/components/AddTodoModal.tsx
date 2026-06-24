@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useTodos } from "../hooks/useTodos";
 import DateRangeCalendar from "./DateRangeCalendar";
 import { COLOR_PALETTE, getColorDot } from "../constants/colorPalette";
+import { IconEraser } from "@tabler/icons-react";
 
 function getTodayStr() {
   const now = new Date();
@@ -17,6 +18,7 @@ export default function AddTodoModal() {
     setIsModalOpen,
     addTodo,
     updateTodo,
+    deleteTodo,
     editingTodo,
     setEditingTodo,
     categories,
@@ -65,6 +67,20 @@ export default function AddTodoModal() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // 삭제 기능
+  const handleDelete = async () => {
+    if (!editingTodo) return;
+    if (!confirm("삭제하시겠습니까?")) return;
+
+    setIsSubmitting(true);
+    try {
+      await deleteTodo(editingTodo.id);
+      handleClose();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!isModalOpen) return null;
 
@@ -273,21 +289,28 @@ export default function AddTodoModal() {
 
         {/* 하단: 선택 기간 + 버튼 */}
         <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
-          <p className="text-xs text-slate-500 whitespace-nowrap">
-            기간:{" "}
-            {startDate === endDate ? startDate : `${startDate} ~ ${endDate}`}
-          </p>
+          {isEditMode ? (
+            <button
+              onClick={handleDelete}
+              className="flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-600 transition-colors"
+            >
+              <IconEraser stroke={2} size={18} />
+              일정 삭제하기
+            </button>
+          ) : (
+            <div /> // 추가 모드일 땐 빈 공간 유지 (버튼 그룹이 우측 정렬되도록)
+          )}
           <div className="flex gap-2">
             <button
               onClick={handleClose}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors"
+              className="px-5 py-2.5 rounded-xl text-xs font-medium text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors"
             >
               취소
             </button>
             <button
               onClick={handleSubmit}
               disabled={!title.trim() || isSubmitting}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
+              className="px-5 py-2.5 rounded-xl text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
             >
               {isSubmitting
                 ? "처리 중..."
