@@ -16,8 +16,10 @@ import CategoryAnalysis from "./components/CategoryAnalysis";
 import Quotes from "./components/Quotes";
 // 할 일 추가/등록 컴포넌트
 import AddTodoModal from "./components/AddTodoModal";
-// 캘린더페이지
+// 캘린더 페이지
 import CalendarPage from "./pages/CalendarPage";
+// 할 일 관리 페이지
+import TodoManagePage from "./pages/TodoMangePage";
 
 import { useTodos } from "./hooks/useTodos";
 import myflow from "./assets/images/myflow.png";
@@ -187,8 +189,10 @@ export default function App() {
             </div>
           </>
         )}
-
+        {/* 캘린더 페이지 */}
         {currentMenu === "calendar" && <CalendarPage />}
+        {/* 할 일 관리 페이지 */}
+        {currentMenu === "tasks" && <TodoManagePage />}
       </main>
     </div>
   );

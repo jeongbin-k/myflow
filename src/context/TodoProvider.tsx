@@ -231,6 +231,24 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // 할 일 메모 수정 (UPSERT 느낌, memo 컬럼만 업데이트)
+  const updateMemo = async (id: number, memo: string) => {
+    try {
+      const { error } = await supabase
+        .from("todos")
+        .update({ memo })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setTodos((prev) =>
+        prev.map((todo) => (todo.id === id ? { ...todo, memo } : todo)),
+      );
+    } catch (error) {
+      console.log("메모 저장 실패", error);
+    }
+  };
+
   // 웹이 켜지자마자 DB에서 데이터를 자동으로 긁어옴
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -259,6 +277,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
         defaultModalDate,
         openModalForDate,
         setDefaultModalDate,
+        updateMemo,
       }}
     >
       {children}

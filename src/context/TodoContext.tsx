@@ -12,6 +12,7 @@ export interface Todo {
   end_date: string | null; // 종료일
   updated_at: string;
   color: string;
+  memo: string | null;
 }
 
 export interface Category {
