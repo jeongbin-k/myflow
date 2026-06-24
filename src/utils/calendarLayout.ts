@@ -54,8 +54,8 @@ export function generateMonthGrid(
     days.push({ type: "current", day: i, dateStr: toDateStr(date) });
   }
 
-  // 다음 달 채우기 (6주 = 42칸 맞추기)
-  const remaining = 42 - days.length;
+  // 다음 달 채우기 (6주 = 42칸 맞추기) => 수정  월마다 실제로 필요한 row 수 계산 (6/24)
+  const remaining = (7 - (days.length % 7)) % 7;
   for (let i = 1; i <= remaining; i++) {
     const date = new Date(year, month, i);
     days.push({ type: "next", day: i, dateStr: toDateStr(date) });
