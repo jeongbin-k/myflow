@@ -114,7 +114,14 @@ export default function AddTodoModal() {
         );
         await updateMemo(editingTodo.id, showMemo ? memo.trim() : "");
       } else {
-        await addTodo(title.trim(), category, startDate, endDate, color);
+        await addTodo(
+          title.trim(),
+          category,
+          startDate,
+          endDate,
+          color,
+          showMemo ? memo.trim() : "",
+        );
       }
       handleClose();
     } finally {
