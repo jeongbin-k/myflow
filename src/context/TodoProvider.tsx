@@ -111,6 +111,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     dueDate?: string,
     endDate?: string,
     color?: string,
+    memo?: string,
   ) => {
     // 만약dueDate 인자가 안 넘어오면, 로컬 브라우저 타임존 기준의 오늘 날짜(YYYY-MM-DD)를 기본값으로 사용합니다.
     const now = new Date();
@@ -133,6 +134,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
             due_date: finalStart,
             end_date: finalEnd,
             color: color ?? "blue",
+            memo: memo?.trim() ? memo.trim() : null,
           },
         ])
         .select();
