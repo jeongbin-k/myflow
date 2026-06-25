@@ -43,6 +43,7 @@ export interface TodoContextType {
     color: string,
   ) => Promise<void>;
   deleteTodo: (id: number) => Promise<void>;
+  updateMemo: (id: number, memo: string) => Promise<void>;
 
   // "추가모드" , "수정 모드"를 하나의 모달같이 처리하게끔
   editingTodo: Todo | null;

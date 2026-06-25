@@ -138,9 +138,9 @@ export default function DateRangeCalendar({
   };
 
   return (
-    <div className="flex gap-6">
-      {/* 좌측: 캘린더 그리드 (넓게) */}
-      <div className="flex flex-col gap-3 flex-1 min-w-0">
+    <div className="flex flex-col gap-4">
+      {/* 캘린더 그리드 (전체 너비) */}
+      <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -195,16 +195,16 @@ export default function DateRangeCalendar({
                   !isRangeComplete && setHoverDate(item.dateStr)
                 }
                 className={`relative h-9 text-xs font-medium transition-colors
-                ${state.inRange ? "bg-indigo-50" : ""}
-                ${state.isStart ? "rounded-l-full" : ""}
-                ${state.isEnd ? "rounded-r-full" : ""}
-              `}
+              ${state.inRange ? "bg-indigo-50" : ""}
+              ${state.isStart ? "rounded-l-full" : ""}
+              ${state.isEnd ? "rounded-r-full" : ""}
+            `}
               >
                 <span
                   className={`w-9 h-9 flex items-center justify-center rounded-full mx-auto
-                  ${state.isStart || state.isEnd ? "bg-indigo-600 text-white" : "text-slate-700"}
-                  ${state.isToday && !state.isStart && !state.isEnd ? "border border-indigo-400" : ""}
-                `}
+                ${state.isStart || state.isEnd ? "bg-indigo-600 text-white" : "text-slate-700"}
+                ${state.isToday && !state.isStart && !state.isEnd ? "border border-indigo-400" : ""}
+              `}
                 >
                   {item.day}
                 </span>
@@ -214,9 +214,9 @@ export default function DateRangeCalendar({
         </div>
       </div>
 
-      {/* 우측: Start/End 인풋만 */}
-      <div className="w-[180px] flex flex-col gap-4 shrink-0 border-l border-slate-100 pl-5">
-        <div className="flex flex-col gap-1.5">
+      {/* 시작일/종료일 인풋 (캘린더 아래, 가로 배치) */}
+      <div className="flex gap-3 pt-3 border-t border-slate-100">
+        <div className="flex-1 flex flex-col gap-1.5">
           <label className="text-xs font-bold text-slate-500">시작일</label>
           <input
             type="date"
@@ -225,7 +225,7 @@ export default function DateRangeCalendar({
             className="border border-slate-200 rounded-lg px-2 py-2 text-xs focus:outline-none focus:border-indigo-400 w-full"
           />
         </div>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex-1 flex flex-col gap-1.5">
           <label className="text-xs font-bold text-slate-500">종료일</label>
           <input
             type="date"

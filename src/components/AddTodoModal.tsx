@@ -18,6 +18,7 @@ export default function AddTodoModal() {
     setIsModalOpen,
     addTodo,
     updateTodo,
+    updateMemo,
     deleteTodo,
     editingTodo,
     setEditingTodo,
@@ -44,7 +45,12 @@ export default function AddTodoModal() {
       defaultModalDate ??
       getTodayStr(),
   );
+  //
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 메모 토글 + 내용 (수정모드에서 이미 메모가 있으면 자동으로 펼쳐짐)
+  const [showMemo, setShowMemo] = useState(!!editingTodo?.memo);
+  const [memo, setMemo] = useState(editingTodo?.memo ?? "");
 
   // 색상 팔레트 팝업 상태
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
@@ -106,6 +112,7 @@ export default function AddTodoModal() {
           endDate,
           color,
         );
+        await updateMemo(editingTodo.id, showMemo ? memo.trim() : "");
       } else {
         await addTodo(title.trim(), category, startDate, endDate, color);
       }
@@ -149,7 +156,7 @@ export default function AddTodoModal() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-xl w-[580px] p-6 flex flex-col gap-5"
+        className="bg-white rounded-2xl shadow-xl w-[480px] p-6 flex flex-col gap-5"
       >
         {/* 헤더: 색상 동그라미 + 제목 인풋 */}
         <div className="flex items-center justify-between">
@@ -211,7 +218,9 @@ export default function AddTodoModal() {
 
         {/* 기간 선택 캘린더 */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-bold text-slate-500">기간</label>
+          <label className="text-xs font-bold text-slate-500 dis hidden">
+            기간
+          </label>
           <DateRangeCalendar
             startDate={startDate}
             endDate={endDate}
@@ -285,6 +294,32 @@ export default function AddTodoModal() {
               </button>
             )}
           </div>
+        </div>
+        {/* 메모 토글 */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold text-slate-500">메모</label>
+            <button
+              type="button"
+              onClick={() => setShowMemo((prev) => !prev)}
+              className={`w-9 h-5 rounded-full flex items-center transition-colors px-0.5
+                ${showMemo ? "bg-indigo-600 justify-end" : "bg-slate-200 justify-start"}
+              `}
+              aria-label="메모 토글"
+            >
+              <span className="w-4 h-4 rounded-full bg-white shadow-sm" />
+            </button>
+          </div>
+
+          {showMemo && (
+            <textarea
+              value={memo}
+              onChange={(e) => setMemo(e.target.value)}
+              placeholder="메모를 입력하세요"
+              rows={3}
+              className="w-full text-sm text-slate-700 border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-indigo-400 placeholder:text-slate-300 resize-none"
+            />
+          )}
         </div>
 
         {/* 하단: 선택 기간 + 버튼 */}
