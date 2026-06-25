@@ -43,9 +43,10 @@ export default function TodoStatsCards({ todos }: Props) {
       {cards.map((card) => (
         <div
           key={card.label}
-          className="bg-white border border-slate-100 rounded-2xl p-5 flex flex-col gap-2"
+          // bg-gradient-to-b from-transparent to-indigo-100/20
+          className="bg-white border border-slate-100 rounded-2xl p-5 flex flex-col gap-2 "
         >
-          <span className="text-xs font-semibold text-slate-400">
+          <span className="text-xs font-semibold text-gray-500">
             {card.label}
           </span>
           <span className={`text-2xl font-bold ${card.accent}`}>

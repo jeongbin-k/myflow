@@ -7,7 +7,7 @@ import {
   type DateFilterKey,
 } from "../utils/dateRangeFilter";
 import TodoStatsCards from "../components/TodoStatsCards";
-import TodoManageList from "../components/TodoMangeList";
+import TodoMangeList from "../components/TodoMangeList";
 
 export default function TodoManagePage() {
   const { todos } = useTodos();
@@ -56,12 +56,15 @@ export default function TodoManagePage() {
           ))}
         </div>
       </div>
-
       {/* 상단 통계 카드 */}
       <TodoStatsCards todos={filteredTodos} />
-
       {/* 하단 리스트 */}
-      <TodoManageList todos={filteredTodos} />
+      <TodoMangeList
+        todos={filteredTodos}
+        filterLabel={
+          filterOptions.find((opt) => opt.key === filterKey)?.label ?? ""
+        }
+      />
     </div>
   );
 }
