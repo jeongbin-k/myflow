@@ -13,6 +13,9 @@ export default function TodoManagePage() {
   const { todos } = useTodos();
   const [filterKey, setFilterKey] = useState<DateFilterKey>("thisWeek");
 
+  // 카테고리 다중선택 필터 상태 (빈 배열 = 전체 보기)
+  const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
+
   const filterOptions = useMemo(() => getDateFilterOptions(), []);
 
   const { start, end } = useMemo(
@@ -30,40 +33,28 @@ export default function TodoManagePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 헤더: 타이틀 + 기간 필터 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">할 일 관리</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            기간별로 할 일을 모아보고 정리해요.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-1">
-          {filterOptions.map((opt) => (
-            <button
-              key={opt.key}
-              onClick={() => setFilterKey(opt.key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap
-                ${
-                  filterKey === opt.key
-                    ? "bg-indigo-600 text-white"
-                    : "text-slate-500 hover:bg-slate-50"
-                }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+      {/* 헤더: 타이틀만 */}
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">할 일 관리</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          기간별로 할 일을 모아보고 정리해요.
+        </p>
       </div>
-      {/* 상단 통계 카드 */}
+
+      {/* 상단 통계 카드 (기간 필터만 적용, 카테고리 필터는 미적용 - 전체 기간 통계 유지 목적) */}
       <TodoStatsCards todos={filteredTodos} />
-      {/* 하단 리스트 */}
+
+      {/* 하단 리스트 (필터 툴바 포함) */}
       <TodoMangeList
         todos={filteredTodos}
         filterLabel={
           filterOptions.find((opt) => opt.key === filterKey)?.label ?? ""
         }
+        filterOptions={filterOptions}
+        filterKey={filterKey}
+        onFilterChange={setFilterKey}
+        categoryFilters={categoryFilters}
+        onCategoryFiltersChange={setCategoryFilters}
       />
     </div>
   );
