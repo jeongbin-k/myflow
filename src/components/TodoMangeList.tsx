@@ -1,3 +1,4 @@
+// src/components/TodoMangeList.tsx
 import { useState } from "react";
 import type { Todo } from "../context/TodoContext";
 import { useTodos } from "../hooks/useTodos";
@@ -157,7 +158,7 @@ export default function TodoMangeList({
   const groups = [
     {
       key: "today",
-      label: "오늘",
+      label: "Today",
       items: todayTodos,
       accent: "dark" as const,
     },
@@ -229,16 +230,36 @@ export default function TodoMangeList({
             stroke={2}
             className="text-slate-400 shrink-0"
           />
-          <span className="text-xs text-slate-400 truncate">{todo.memo}</span>
+          <span className="text-sm text-slate-400 truncate">{todo.memo}</span>
         </div>
       )}
       {/* 카테고리 칩 */}
-      <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 shrink-0 whitespace-nowrap w-20 text-center">
+      <span className="text-sm font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 shrink-0 whitespace-nowrap w-20 text-center">
         {todo.category}
       </span>
       {/* 날짜 */}
-      <span className="text-xs text-slate-400 shrink-0 w-24 text-right whitespace-nowrap">
+      <span className="text-sm text-slate-400 shrink-0 w-24 text-right whitespace-nowrap">
         {todo.due_date}
+      </span>
+    </div>
+  );
+
+  // 그룹별 테이블 헤더 (NAME/DESCRIPTION/CATEGORY/DUE DATE)
+  const renderTableHeader = () => (
+    <div className="flex items-center gap-3 px-5 py-2.5 bg-slate-50/60 border-b border-[#e0e0e0]">
+      <span className="w-5 shrink-0" />
+      <span className="w-1.5 shrink-0" />
+      <span className="flex-1 min-w-0 text-xs text-slate-700 tracking-wide">
+        NAME
+      </span>
+      <span className="w-32 text-xs text-slate-700 tracking-wide">
+        DESCRIPTION
+      </span>
+      <span className="text-xs text-slate-700 tracking-wide shrink-0 w-20 text-center">
+        CATEGORY
+      </span>
+      <span className="text-xs text-slate-700 tracking-wide shrink-0 w-24 text-right">
+        DUE DATE
       </span>
     </div>
   );
@@ -431,24 +452,8 @@ export default function TodoMangeList({
           </div>
         </div>
       </div>
-      {/* 테이블 헤더 */}
-      <div className="flex items-center gap-3 px-5 py-2.5 mb-4 bg-slate-50/60 border-b-1 border-[#e0e0e0]">
-        <span className="w-5 shrink-0" />
-        <span className="w-1.5 shrink-0" />
-        <span className="flex-1 min-w-0 text-xs font-bold text-slate-700 tracking-wide">
-          NAME
-        </span>
-        <span className="w-32 text-xs font-bold text-slate-700 tracking-wide">
-          DESCRIPTION
-        </span>
-        <span className="text-xs font-bold text-slate-700 tracking-wide shrink-0 w-20 text-center">
-          CATEGORY
-        </span>
-        <span className="text-xs font-bold text-slate-700 tracking-wide shrink-0 w-24 text-right">
-          DUE DATE
-        </span>
-      </div>
-      {/* 리스트 */}
+
+      {/* 리스트 (그룹별로 자체 헤더를 가짐) */}
       <div className="bg-white border border-slate-100 overflow-hidden">
         {sortedTodos.length === 0 ? (
           <div className="p-12 flex items-center justify-center">
@@ -465,9 +470,7 @@ export default function TodoMangeList({
                 {/* 그룹 헤더 (클릭하면 접기/펴기) */}
                 <button
                   onClick={() => toggleGroupCollapse(group.key)}
-                  className={`w-full flex items-center gap-2 px-5 py-2.5 transition-colors ${
-                    group.accent === "dark" ? "bg-indigo-100" : "bg-indigo-100"
-                  }`}
+                  className="w-full flex items-center gap-2 px-5 py-2.5 transition-colors bg-indigo-100"
                 >
                   <IconChevronDown
                     size={14}
@@ -476,39 +479,26 @@ export default function TodoMangeList({
                       isCollapsed ? "-rotate-90" : ""
                     }`}
                   />
-                  {/* <span
-                    className={`w-1.5 h-1.5 rounded-full ${
-                      group.accent === "dark"
-                        ? "bg-indigo-500"
-                        : "bg-indigo-500"
-                    }`}
-                  /> */}
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
                   <span className="text-xs font-semibold tracking-wide text-black">
                     {group.label}
                   </span>
-                  <div
-                    className={`bg-white rounded-sm border w-4 h-4 flex items-center justify-center ${
-                      group.accent === "dark"
-                        ? "border-indigo-500"
-                        : "border-indigo-500"
-                    }`}
-                  >
-                    <span
-                      className={`text-[11px] translate-y-[1px] font-semibold ${
-                        group.accent === "dark"
-                          ? "text-indigo-500"
-                          : "text-indigo-500"
-                      }`}
-                    >
+                  <div className="bg-white rounded-sm border w-4 h-4 flex items-center justify-center border-indigo-500">
+                    <span className="text-[11px] translate-y-[1px] font-semibold text-indigo-500">
                       {group.items.length}
                     </span>
                   </div>
                 </button>
 
-                {!isCollapsed &&
-                  group.items.map((todo, idx) =>
-                    renderRow(todo, idx === group.items.length - 1),
-                  )}
+                {/* 그룹 전용 테이블 헤더 + 행들 (펴졌을 때만) */}
+                {!isCollapsed && (
+                  <>
+                    {renderTableHeader()}
+                    {group.items.map((todo, idx) =>
+                      renderRow(todo, idx === group.items.length - 1),
+                    )}
+                  </>
+                )}
               </div>
             );
           })
