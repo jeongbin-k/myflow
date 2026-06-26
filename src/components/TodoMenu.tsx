@@ -123,13 +123,9 @@ export default function TodoMenu({ todo }: Props) {
             </button>
             <button
               onClick={handleDelete}
-              className="flex items-center gap-3 w-full text-left px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-red-500 transition-colors"
+              className="flex items-center gap-3 w-full text-left px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              <IconTrash
-                size={17}
-                stroke={1.75}
-                className="text-slate-400 group-hover:text-red-400"
-              />
+              <IconTrash size={17} stroke={1.75} className="text-slate-400" />
               삭제
             </button>
 
