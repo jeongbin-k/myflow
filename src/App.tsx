@@ -25,7 +25,7 @@ import { useTodos } from "./hooks/useTodos";
 import myflow from "./assets/images/myflow.png";
 import { useState } from "react";
 import {
-  IconHome,
+  IconLayoutDashboard,
   IconCheckbox,
   IconCalendar,
   IconArrowBarToLeft,
@@ -37,7 +37,7 @@ const menus = [
   {
     id: "dashboard",
     label: "대시보드",
-    icon: <IconHome stroke={2} size={20} />,
+    icon: <IconLayoutDashboard stroke={2} size={20} />,
   },
   { id: "tasks", label: "할 일 관리", icon: <IconCheckbox size={20} /> },
   { id: "calendar", label: "캘린더", icon: <IconCalendar size={20} /> },
@@ -132,7 +132,7 @@ export default function App() {
       {/* 우측 메인 대시보드 영역 */}
       <main
         id="dashboard-scroll-area"
-        className="flex-1 h-full overflow-y-auto p-8"
+        className="flex-1 h-full overflow-y-auto p-8 [scrollbar-gutter:stable]"
       >
         {currentMenu === "dashboard" && (
           <>
