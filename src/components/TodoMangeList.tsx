@@ -11,7 +11,12 @@ import {
   IconX,
   IconListTree,
 } from "@tabler/icons-react";
+import TodoMenu from "./TodoMenu";
+
 import type { DateFilterKey } from "../utils/dateRangeFilter";
+
+// 헤더와 행이 공유하는 그리드 컬럼 정의
+const GRID_COLS = "grid-cols-[20px_6px_1fr_100px_80px_90px_40px]";
 
 type FilterOption = { key: DateFilterKey; label: string };
 type CompletionFilter = "all" | "completed" | "incomplete";
@@ -174,14 +179,14 @@ export default function TodoMangeList({
     <div
       key={todo.id}
       onClick={() => handleRowClick(todo)}
-      className={`flex items-center gap-3 px-5 py-4 cursor-pointer hover:bg-slate-50/70 transition-colors
+      className={`grid ${GRID_COLS} items-center gap-3 px-5 py-4 cursor-pointer hover:bg-slate-50/70 transition-colors
         ${!isLast ? "border-b border-slate-100" : ""}
       `}
     >
       {/* 체크박스 (완료 토글, 대시보드 스타일과 통일) */}
       <button
         onClick={(e) => handleToggle(e, todo)}
-        className="relative flex items-center justify-center shrink-0"
+        className="relative flex items-center justify-center"
         aria-label={todo.is_completed ? "완료 취소" : "완료 처리"}
       >
         <input
@@ -209,12 +214,10 @@ export default function TodoMangeList({
         </div>
       </button>
       {/* 색상 dot */}
-      <span
-        className={`w-1.5 h-1.5 rounded-full shrink-0 ${getColorDot(todo.color)}`}
-      />
+      <span className={`w-1.5 h-1.5 rounded-full ${getColorDot(todo.color)}`} />
       {/* 제목 */}
       <span
-        className={`flex-1 min-w-0 truncate text-sm font-medium
+        className={`truncate text-sm font-medium
           ${
             todo.is_completed ? "text-slate-400 line-through" : "text-slate-700"
           }
@@ -222,44 +225,49 @@ export default function TodoMangeList({
       >
         {todo.title}
       </span>
-      {/* 메모 아이콘 (메모 있을 때만) */}
-      {todo.memo && (
-        <div className="w-30 flex items-center gap-1 shrink-0">
-          <IconMessageDots
-            size={14}
-            stroke={2}
-            className="text-slate-400 shrink-0"
-          />
-          <span className="text-sm text-slate-400 truncate">{todo.memo}</span>
-        </div>
-      )}
+      {/* 메모 (항상 칸을 차지, 내용만 조건부) */}
+      <div className="min-w-0 flex items-center gap-1">
+        {todo.memo && (
+          <>
+            <IconMessageDots
+              size={14}
+              stroke={2}
+              className="text-slate-400 shrink-0"
+            />
+            <span className="text-sm text-slate-400 truncate">{todo.memo}</span>
+          </>
+        )}
+      </div>
       {/* 카테고리 칩 */}
-      <span className="text-sm font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 shrink-0 whitespace-nowrap w-20 text-center">
-        {todo.category}
+      <span>
+        <span className="text-sm font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 whitespace-nowrap inline-block">
+          {todo.category}
+        </span>
       </span>
       {/* 날짜 */}
-      <span className="text-sm text-slate-400 shrink-0 w-24 text-right whitespace-nowrap">
+      <span className="text-xs text-slate-400 whitespace-nowrap">
         {todo.due_date}
       </span>
+      {/* 케밥 메뉴 (편집/삭제) */}
+      <div onClick={(e) => e.stopPropagation()}>
+        <TodoMenu todo={todo} />
+      </div>
     </div>
   );
 
-  // 그룹별 테이블 헤더 (NAME/DESCRIPTION/CATEGORY/DUE DATE)
+  // 그룹별 테이블 헤더 (NAME/DESCRIPTION/CATEGORY/DUE DATE/ACTIONS)
   const renderTableHeader = () => (
-    <div className="flex items-center gap-3 px-5 py-2.5 bg-slate-50/60 border-b border-[#e0e0e0]">
-      <span className="w-5 shrink-0" />
-      <span className="w-1.5 shrink-0" />
-      <span className="flex-1 min-w-0 text-xs text-slate-700 tracking-wide">
-        NAME
-      </span>
-      <span className="w-32 text-xs text-slate-700 tracking-wide">
-        DESCRIPTION
-      </span>
-      <span className="text-xs text-slate-700 tracking-wide shrink-0 w-20 text-center">
-        CATEGORY
-      </span>
-      <span className="text-xs text-slate-700 tracking-wide shrink-0 w-24 text-right">
-        DUE DATE
+    <div
+      className={`grid ${GRID_COLS} items-center gap-3 px-5 py-2.5 bg-slate-50/60 border-b border-[#e0e0e0]`}
+    >
+      <span />
+      <span />
+      <span className="text-xs text-slate-700 tracking-wide">NAME</span>
+      <span className="text-xs text-slate-700 tracking-wide">DESCRIPTION</span>
+      <span className="text-xs text-slate-700 tracking-wide">CATEGORY</span>
+      <span className="text-xs text-slate-700 tracking-wide">DUE DATE</span>
+      <span className="text-xs text-slate-700 tracking-wide whitespace-nowrap">
+        ACTIONS
       </span>
     </div>
   );
