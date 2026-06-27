@@ -7,7 +7,11 @@ function formatDisplayDate(dateStr: string | null): string {
   return dateStr.slice(5);
 }
 
-export default function TodoRecent() {
+type Props = {
+  onNavigate: (menu: string) => void;
+};
+
+export default function TodoRecent({ onNavigate }: Props) {
   const { todos, isLoading } = useTodos();
 
   // 데이터 가공: 완료된 것들만 골라서 완료 시간(completed_at) 기준 최신순 정렬
@@ -29,7 +33,10 @@ export default function TodoRecent() {
         <h3 className="text-base font-bold text-slate-800 tracking-tight">
           최근 완료한 일
         </h3>
-        <button className="text-xs font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
+        <button
+          onClick={() => onNavigate("tasks")}
+          className="text-xs font-bold text-indigo-500 hover:text-indigo-700 transition-colors"
+        >
           전체보기
         </button>
       </div>

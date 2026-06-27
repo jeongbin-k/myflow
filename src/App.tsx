@@ -174,7 +174,7 @@ export default function App() {
                   <TodoTrend />
                 </div>
                 <div className="xl:col-span-3">
-                  <TodoRecent />
+                  <TodoRecent onNavigate={setCurrentMenu} />
                 </div>
               </div>
 
