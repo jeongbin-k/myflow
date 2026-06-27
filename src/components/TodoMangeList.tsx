@@ -275,7 +275,7 @@ export default function TodoMangeList({
   return (
     <div>
       {/* 툴바: View(완료상태) + Filters(카테고리) + 칩 + 기간 + 검색 */}
-      <div className="flex items-center gap-2 px-5 py-3 border-b border-slate-100 flex-wrap">
+      <div className="flex items-center gap-2 px-5 py-3 border-b border-slate-100 flex-wrap ">
         {/* View 드롭다운 (완료 상태) */}
         <div className="relative">
           <button
