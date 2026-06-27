@@ -20,6 +20,8 @@ import AddTodoModal from "./components/AddTodoModal";
 import CalendarPage from "./pages/CalendarPage";
 // 할 일 관리 페이지
 import TodoManagePage from "./pages/TodoMangePage";
+// 공통 헤더
+import Header from "./components/Header";
 
 import { useTodos } from "./hooks/useTodos";
 import myflow from "./assets/images/myflow.png";
@@ -49,7 +51,7 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // 할 일 추가 모달
-  const { isModalOpen, setIsModalOpen } = useTodos();
+  const { isModalOpen } = useTodos();
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F8FAFC]">
@@ -64,12 +66,12 @@ export default function App() {
         {/* 접기/펼치기 토글 버튼 */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute -right-3 top-4.5 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center text-xs text-slate-500 hover:text-slate-800 hover:shadow-sm cursor-pointer z-50 transition-all"
+          className="absolute -right-3 top-4.5 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-xs text-slate-500 hover:text-slate-800 hover:shadow-sm cursor-pointer z-50 transition-all"
         >
           {isSidebarOpen ? (
-            <IconArrowBarToLeft stroke={2} size={20} />
+            <IconArrowBarToLeft stroke={1.5} size={17} />
           ) : (
-            <IconArrowBarToRight stroke={2} size={20} />
+            <IconArrowBarToRight stroke={1.5} size={17} />
           )}
         </button>
 
@@ -111,7 +113,7 @@ export default function App() {
           ))}
         </div>
 
-        {/* 프로필 영역 (닫혔을 때는 아바타만 노출) */}
+        {/* 프로필 영역 (닫혔을 때는 아바타만 노출)
         <div
           className={`border-t border-slate-100 pt-4 flex items-center gap-3 ${isSidebarOpen ? "" : "justify-center"}`}
         >
@@ -126,74 +128,59 @@ export default function App() {
               <p className="text-xs text-slate-400">오늘도 화이팅! 💪</p>
             </div>
           )}
-        </div>
+        </div> */}
       </aside>
-
       {/* 우측 메인 대시보드 영역 */}
-      <main
-        id="dashboard-scroll-area"
-        className="flex-1 h-full overflow-y-auto p-8 [scrollbar-gutter:stable]"
-      >
-        {currentMenu === "dashboard" && (
-          <>
-            <header className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                  안녕하세요, JeongBin님! 👋
-                </h1>
-                <p className="text-sm text-slate-500 mt-1">
-                  오늘도 멋진 하루를 만들어가요.
-                </p>
-              </div>
-              <button
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1 "
-                onClick={() => setIsModalOpen(true)}
-              >
-                <span>+</span> 할 일 등록
-              </button>
-            </header>
+      <div className="flex-1 flex flex-col h-full">
+        <Header currentMenu={currentMenu} />
+        <main
+          id="dashboard-scroll-area"
+          className="flex-1 h-full overflow-y-auto p-8 [scrollbar-gutter:stable]"
+        >
+          {currentMenu === "dashboard" && (
+            <>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                  <div className="xl:col-span-7">
+                    <MainCalendar onNavigate={setCurrentMenu} />
+                  </div>
+                  <div className="xl:col-span-2">
+                    <ProgressDonut />
+                  </div>
+                  <div className="xl:col-span-3">
+                    <WeeklyBar />
+                  </div>
+                </div>
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-                <div className="xl:col-span-7">
-                  <MainCalendar onNavigate={setCurrentMenu} />
+                <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
+                  <div className="xl:col-span-3">
+                    <TodoToday />
+                  </div>
+                  <div className="xl:col-span-4">
+                    <TodoTrend />
+                  </div>
+                  <div className="xl:col-span-3">
+                    <TodoRecent onNavigate={setCurrentMenu} />
+                  </div>
                 </div>
-                <div className="xl:col-span-2">
-                  <ProgressDonut />
-                </div>
-                <div className="xl:col-span-3">
-                  <WeeklyBar />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
-                <div className="xl:col-span-3">
-                  <TodoToday />
-                </div>
-                <div className="xl:col-span-4">
-                  <TodoTrend />
-                </div>
-                <div className="xl:col-span-3">
-                  <TodoRecent onNavigate={setCurrentMenu} />
+                <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
+                  <div className="xl:col-span-3">
+                    <CategoryAnalysis />
+                  </div>
+                  <div className="xl:col-span-7">
+                    <Quotes />
+                  </div>
                 </div>
               </div>
-
-              <div className="grid grid-cols-1 xl:grid-cols-10 gap-6 items-stretch">
-                <div className="xl:col-span-3">
-                  <CategoryAnalysis />
-                </div>
-                <div className="xl:col-span-7">
-                  <Quotes />
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-        {/* 캘린더 페이지 */}
-        {currentMenu === "calendar" && <CalendarPage />}
-        {/* 할 일 관리 페이지 */}
-        {currentMenu === "tasks" && <TodoManagePage />}
-      </main>
+            </>
+          )}
+          {/* 캘린더 페이지 */}
+          {currentMenu === "calendar" && <CalendarPage />}
+          {/* 할 일 관리 페이지 */}
+          {currentMenu === "tasks" && <TodoManagePage />}
+        </main>
+      </div>
     </div>
   );
 }

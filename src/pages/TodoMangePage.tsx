@@ -33,14 +33,7 @@ export default function TodoManagePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 헤더 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">할 일 관리</h1>
-          {/* <p className="text-sm text-slate-500 mt-1">
-            기간별로 할 일을 모아보고 정리해요.
-          </p> */}
-        </div>
+      <div className="flex justify-end">
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1"
