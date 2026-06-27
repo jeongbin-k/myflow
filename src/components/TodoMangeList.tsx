@@ -240,12 +240,12 @@ export default function TodoMangeList({
       </div>
       {/* 카테고리 칩 */}
       <span>
-        <span className="text-sm font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 whitespace-nowrap inline-block">
+        <span className="text-sm px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 whitespace-nowrap inline-block">
           {todo.category}
         </span>
       </span>
       {/* 날짜 */}
-      <span className="text-xs text-slate-400 whitespace-nowrap">
+      <span className="text-sm text-slate-400 whitespace-nowrap">
         {todo.due_date}
       </span>
       {/* 케밥 메뉴 (편집/삭제) */}

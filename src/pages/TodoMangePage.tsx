@@ -10,7 +10,7 @@ import TodoStatsCards from "../components/TodoStatsCards";
 import TodoMangeList from "../components/TodoMangeList";
 
 export default function TodoManagePage() {
-  const { todos } = useTodos();
+  const { todos, setIsModalOpen } = useTodos();
   const [filterKey, setFilterKey] = useState<DateFilterKey>("thisWeek");
 
   // 카테고리 다중선택 필터 상태 (빈 배열 = 전체 보기)
@@ -33,12 +33,20 @@ export default function TodoManagePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* 헤더: 타이틀만 */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">할 일 관리</h1>
-        <p className="text-sm text-slate-500 mt-1">
-          기간별로 할 일을 모아보고 정리해요.
-        </p>
+      {/* 헤더 */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">할 일 관리</h1>
+          {/* <p className="text-sm text-slate-500 mt-1">
+            기간별로 할 일을 모아보고 정리해요.
+          </p> */}
+        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm shadow-indigo-100 transition-all flex items-center gap-1"
+        >
+          <span>+</span> 할 일 등록
+        </button>
       </div>
 
       {/* 상단 통계 카드 (기간 필터만 적용, 카테고리 필터는 미적용 - 전체 기간 통계 유지 목적) */}
