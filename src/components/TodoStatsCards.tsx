@@ -34,7 +34,7 @@ export default function TodoStatsCards({ todos }: Props) {
       label: "달성률",
       value: rate,
       unit: "%",
-      accent: "text-emerald-600",
+      accent: "text-indigo-600",
     },
   ];
 
