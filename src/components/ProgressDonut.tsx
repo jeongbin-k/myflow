@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTodos } from "../hooks/useTodos";
+import { isTodoOnDate } from "../utils/todoDateRange";
 
 export default function ProgressDonut() {
   const { todos, isLoading } = useTodos();
@@ -13,9 +14,9 @@ export default function ProgressDonut() {
     return `${year}-${month}-${day}`;
   }, []);
 
-  // due_date가 오늘인 것만 필터링
+  // due_date가 오늘인 것만 필터링 추가 (6/29일 isTodoOnDate)
   const todayTodos = useMemo(
-    () => todos.filter((todo) => todo.due_date === todayStr),
+    () => todos.filter((todo) => isTodoOnDate(todo, todayStr)),
     [todos, todayStr],
   );
 
