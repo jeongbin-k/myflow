@@ -1,0 +1,39 @@
+// src/utils/notificationStorage.ts
+
+import type { NotificationRecord } from "../types/notification";
+
+function getStorageKey(): string {
+  // TODO: Auth 붙으면 실제 userId로 교체
+  // const { user } = useAuth();
+  // return `myflow:notifications:${user?.id ?? "guest"}`;
+  return "myflow:notifications:guest";
+}
+
+export function loadNotifications(): NotificationRecord[] {
+  try {
+    const raw = localStorage.getItem(getStorageKey());
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed as NotificationRecord[];
+  } catch {
+    return [];
+  }
+}
+
+export function saveNotifications(records: NotificationRecord[]): void {
+  try {
+    localStorage.setItem(getStorageKey(), JSON.stringify(records));
+  } catch {
+    // localStorage 용량 초과 등의 예외는 조용히 무시 (알림은 비핵심 기능)
+  }
+}
+
+// 오래된 알림 정리 (예: 7일 이상 지난 것은 제거) - 무한정 쌓이는 것 방지
+export function pruneOldNotifications(
+  records: NotificationRecord[],
+  keepDays = 7,
+): NotificationRecord[] {
+  const cutoff = Date.now() - keepDays * 24 * 60 * 60 * 1000;
+  return records.filter((r) => new Date(r.triggeredAt).getTime() >= cutoff);
+}
