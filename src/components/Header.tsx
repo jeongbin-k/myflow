@@ -40,7 +40,7 @@ export default function Header({ currentMenu }: Props) {
 
   return (
     <header className="h-16 px-8 flex items-center justify-between border-b border-slate-100 bg-white shrink-0">
-      <h1 className="text-lg font-bold text-slate-900 pl-4">{title}</h1>
+      <h1 className="text-lg font-bold text-slate-900">{title}</h1>
 
       <div className="flex items-center gap-4">
         {/* 알림 종 아이콘 */}

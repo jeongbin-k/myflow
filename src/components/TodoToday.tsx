@@ -1,6 +1,7 @@
 import { useTodos } from "../hooks/useTodos";
 import { useMemo } from "react";
 import TodoMenu from "./TodoMenu";
+import { isTodoOnDate } from "../utils/todoDateRange";
 
 export default function TodoToday() {
   // 전역 기지에서 데이터와 토글 함수, 로딩 상태를 꺼내온다.
@@ -16,7 +17,7 @@ export default function TodoToday() {
     return `${year}-${month}-${day}`;
   }, []);
 
-  const todayTodos = todos.filter((todo) => todo.due_date === todayStr);
+  const todayTodos = todos.filter((todo) => isTodoOnDate(todo, todayStr));
 
   // 진행도 계산
   const completedCount = todayTodos.filter((t) => t.is_completed).length;

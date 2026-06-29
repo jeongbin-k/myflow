@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Todo } from "../context/TodoContext";
 import { useTodos } from "../hooks/useTodos";
 import { getColorDot } from "../constants/colorPalette";
+import { isTodoOnDate } from "../utils/todoDateRange";
 import {
   IconMessageDots,
   IconSearch,
@@ -156,8 +157,8 @@ export default function TodoMangeList({
   });
 
   // Today / 나머지(필터명) 그룹으로 분리
-  const todayTodos = sortedTodos.filter((t) => t.due_date === todayStr);
-  const restTodos = sortedTodos.filter((t) => t.due_date !== todayStr);
+  const todayTodos = sortedTodos.filter((t) => isTodoOnDate(t, todayStr));
+  const restTodos = sortedTodos.filter((t) => !isTodoOnDate(t, todayStr));
 
   // Today / filterlabel
   const groups = [
