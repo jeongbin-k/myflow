@@ -7,7 +7,7 @@ export interface NotificationRecord {
   triggeredAt: string; // ISO timestamp
   seen: boolean;
   message: string;
-  todoIds: string[];
+  todoIds: number[];
 }
 
 export const SLOT_TIMES: Record<
