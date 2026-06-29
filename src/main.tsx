@@ -3,11 +3,14 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { TodoProvider } from "./context/TodoProvider.tsx";
+import { NotificationProvider } from "./context/NotificationProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <TodoProvider>
-      <App />
+      <NotificationProvider>
+        <App />
+      </NotificationProvider>
     </TodoProvider>
   </StrictMode>,
 );
