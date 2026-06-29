@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { IconBell, IconChevronDown } from "@tabler/icons-react";
+import {
+  IconBell,
+  IconChevronDown,
+  IconUser,
+  IconSettings,
+  IconLogout,
+} from "@tabler/icons-react";
 import { useNotifications } from "../hooks/useNotifications";
 
 const pageTitles: Record<string, string> = {
@@ -68,7 +74,7 @@ export default function Header({ currentMenu }: Props) {
     <header className="h-16 px-8 flex items-center justify-between border-b border-slate-100 bg-white shrink-0">
       <h1 className="text-lg font-bold text-slate-900">{title}</h1>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         {/* 알림 종 아이콘 */}
         <div className="relative" ref={notifRef}>
           <button
@@ -125,27 +131,36 @@ export default function Header({ currentMenu }: Props) {
             onClick={() => setIsProfileOpen((prev) => !prev)}
             className="flex items-center gap-2 hover:bg-slate-50 rounded-lg px-2 py-1.5 transition-colors"
           >
-            <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold text-sm shrink-0">
+            <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold text-sm shrink-0">
               JB
             </div>
-            <span className="text-sm font-semibold text-slate-700">
-              Jeong Bin
-            </span>
-            <IconChevronDown size={14} stroke={2} className="text-slate-700" />
+            <IconChevronDown size={14} stroke={2} className="text-slate-900" />
           </button>
 
           {isProfileOpen && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-50">
-              <button className="w-full text-left px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
-                이름 변경
-              </button>
-              <button className="w-full text-left px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
-                프로필 이미지 변경
-              </button>
-              <div className="border-t border-slate-100 my-1.5" />
-              <button className="w-full text-left px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
-                로그아웃
-              </button>
+            <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+              {/* 사용자 정보 영역 */}
+              <div className="px-4 py-3 border-b border-slate-100">
+                <p className="text-sm font-bold text-slate-900">Jeong Bin</p>
+                <p className="text-xs text-slate-500">jb@example.com</p>
+              </div>
+
+              {/* 메뉴 영역 */}
+              <div className="p-1">
+                <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
+                  <IconUser size={16} /> 프로필 변경
+                </button>
+                <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
+                  <IconSettings size={16} /> 계정 설정
+                </button>
+              </div>
+
+              {/* 로그아웃 영역 */}
+              <div className="p-1 border-t border-slate-100">
+                <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
+                  <IconLogout size={16} /> 로그아웃
+                </button>
+              </div>
             </div>
           )}
         </div>
