@@ -55,14 +55,25 @@ export function TodoProvider({ children }: { children: ReactNode }) {
         .order("created_at", { ascending: true });
 
       if (error) throw error;
-      if (data) setCategories(data);
+
+      if (data && data.length === 0) {
+        // 카테고리가 하나도 없는 신규 사용자 -> "일상" 기본 카테고리 자동 생성
+        const { data: defaultCat, error: insertError } = await supabase
+          .from("categories")
+          .insert([{ name: "일상", user_id: session.user.id }])
+          .select();
+
+        if (insertError) throw insertError;
+        setCategories(defaultCat ?? []);
+      } else if (data) {
+        setCategories(data);
+      }
     } catch (error) {
       console.error("카테고리를 불러오지 못했습니다.", error);
     } finally {
       setIsCategoriesLoading(false);
     }
   };
-
   // 새 카테고리 추가
   const addCategory = async (name: string): Promise<Category | null> => {
     if (!session?.user) {
