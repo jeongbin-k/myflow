@@ -3,10 +3,12 @@ import {
   IconBell,
   IconChevronDown,
   IconUser,
-  IconSettings,
   IconLogout,
 } from "@tabler/icons-react";
 import { useNotifications } from "../hooks/useNotifications";
+import { useAuth } from "../hooks/useAuth";
+import { supabase } from "../supabaseClient";
+import ProfileEditModal from "./ProfileEditModal";
 
 const pageTitles: Record<string, string> = {
   dashboard: "대시보드",
@@ -28,11 +30,21 @@ function formatTime(iso: string): string {
 export default function Header({ currentMenu }: Props) {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
   const { notifications, unseenCount, markAllAsSeen } = useNotifications();
+  const { session } = useAuth();
+  const user = session?.user;
+
+  const displayName =
+    (user?.user_metadata?.full_name as string | undefined) ??
+    user?.email?.split("@")[0] ??
+    "사용자";
+  const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
+  const initial = displayName.slice(0, 1).toUpperCase();
 
   // 바깥 클릭 시 드롭다운 닫기
   useEffect(() => {
@@ -62,6 +74,11 @@ export default function Header({ currentMenu }: Props) {
       }
       return next;
     });
+  };
+
+  const handleLogout = async () => {
+    setIsProfileOpen(false);
+    await supabase.auth.signOut();
   };
 
   // 최신순 정렬 (triggeredAt 내림차순)
@@ -131,8 +148,16 @@ export default function Header({ currentMenu }: Props) {
             onClick={() => setIsProfileOpen((prev) => !prev)}
             className="flex items-center gap-2 hover:bg-slate-50 rounded-lg px-2 py-1.5 transition-colors"
           >
-            <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold text-sm shrink-0">
-              JB
+            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold text-sm shrink-0 overflow-hidden">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={displayName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                initial
+              )}
             </div>
             <IconChevronDown size={14} stroke={2} className="text-slate-900" />
           </button>
@@ -141,23 +166,31 @@ export default function Header({ currentMenu }: Props) {
             <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
               {/* 사용자 정보 영역 */}
               <div className="px-4 py-3 border-b border-slate-100">
-                <p className="text-sm font-bold text-slate-900">Jeong Bin</p>
-                <p className="text-xs text-slate-500">jb@example.com</p>
+                <p className="text-sm font-bold text-slate-900">
+                  {displayName}
+                </p>
+                <p className="text-xs text-slate-500">{user?.email}</p>
               </div>
 
               {/* 메뉴 영역 */}
               <div className="p-1">
-                <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
+                <button
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    setIsProfileModalOpen(true);
+                  }}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                >
                   <IconUser size={16} /> 프로필 변경
-                </button>
-                <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
-                  <IconSettings size={16} /> 계정 설정
                 </button>
               </div>
 
               {/* 로그아웃 영역 */}
               <div className="p-1 border-t border-slate-100">
-                <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors">
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                >
                   <IconLogout size={16} /> 로그아웃
                 </button>
               </div>
@@ -165,6 +198,10 @@ export default function Header({ currentMenu }: Props) {
           )}
         </div>
       </div>
+
+      {isProfileModalOpen && (
+        <ProfileEditModal onClose={() => setIsProfileModalOpen(false)} />
+      )}
     </header>
   );
 }
