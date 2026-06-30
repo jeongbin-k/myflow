@@ -33,6 +33,9 @@ import {
   IconArrowBarToLeft,
   IconArrowBarToRight,
 } from "@tabler/icons-react";
+// 로그인 관련
+import LoginPage from "./pages/LoginPage";
+import { useAuth } from "./hooks/useAuth";
 
 // 메뉴관리
 const menus = [
@@ -46,12 +49,20 @@ const menus = [
 ];
 
 export default function App() {
-  const [currentMenu, setCurrentMenu] = useState("dashboard");
-  // 1. 사이드바 열림/닫힘 상태 추가 (기본값: 열림)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { session, isAuthLoading } = useAuth(); // ← 이걸로 교체
 
-  // 할 일 추가 모달
+  const [currentMenu, setCurrentMenu] = useState("dashboard");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { isModalOpen } = useTodos();
+
+  if (isAuthLoading) {
+    return <div>로딩 중</div>;
+  }
+
+  if (!session) {
+    return <LoginPage />;
+  }
+  // ── 로그인 세션 관리 끝 ──
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#F8FAFC]">
@@ -112,23 +123,6 @@ export default function App() {
             </button>
           ))}
         </div>
-
-        {/* 프로필 영역 (닫혔을 때는 아바타만 노출)
-        <div
-          className={`border-t border-slate-100 pt-4 flex items-center gap-3 ${isSidebarOpen ? "" : "justify-center"}`}
-        >
-          <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden shrink-0">
-            <div className="w-full h-full bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold">
-              JB
-            </div>
-          </div>
-          {isSidebarOpen && (
-            <div className="transition-all duration-200">
-              <p className="text-sm font-semibold text-slate-800">Jeong Bin</p>
-              <p className="text-xs text-slate-400">오늘도 화이팅! 💪</p>
-            </div>
-          )}
-        </div> */}
       </aside>
       {/* 우측 메인 대시보드 영역 */}
       <div className="flex-1 flex flex-col h-full">
