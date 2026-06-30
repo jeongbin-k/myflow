@@ -2,8 +2,10 @@ import { useState, useEffect, type ReactNode } from "react";
 import { supabase } from "../supabaseClient";
 import { TodoContext } from "./TodoContext";
 import type { Todo, Category } from "./TodoContext";
+import { useAuth } from "../hooks/useAuth";
 
 export function TodoProvider({ children }: { children: ReactNode }) {
+  const { session } = useAuth();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -22,12 +24,15 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     setDefaultModalDate(dateStr);
     setIsModalOpen(true);
   };
+
   // supabase에서 전체 투두 리스트 가져오기
   const fetchTodos = async () => {
+    if (!session?.user) return;
     try {
       const { data, error } = await supabase
         .from("todos")
         .select("*")
+        .eq("user_id", session.user.id)
         .order("created_at", { ascending: true });
 
       if (error) throw error;
@@ -41,10 +46,12 @@ export function TodoProvider({ children }: { children: ReactNode }) {
 
   // supabase에서 카테고리 목록 가져오기
   const fetchCategories = async () => {
+    if (!session?.user) return;
     try {
       const { data, error } = await supabase
         .from("categories")
         .select("*")
+        .eq("user_id", session.user.id)
         .order("created_at", { ascending: true });
 
       if (error) throw error;
@@ -56,10 +63,13 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  //
-
   // 새 카테고리 추가
   const addCategory = async (name: string): Promise<Category | null> => {
+    if (!session?.user) {
+      console.error("로그인 정보가 없습니다.");
+      return null;
+    }
+
     const trimmed = name.trim();
     if (!trimmed) return null;
 
@@ -70,7 +80,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     try {
       const { data, error } = await supabase
         .from("categories")
-        .insert([{ name: trimmed }])
+        .insert([{ name: trimmed, user_id: session.user.id }])
         .select();
 
       if (error) throw error;
@@ -104,6 +114,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
       console.error("카테고리 삭제 실패", error);
     }
   };
+
   // 2. 새 할 일 추가하기 (CREATE) - due_date 확장 반영
   const addTodo = async (
     title: string,
@@ -113,6 +124,11 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     color?: string,
     memo?: string,
   ) => {
+    if (!session?.user) {
+      console.error("로그인 정보가 없습니다.");
+      return;
+    }
+
     // 만약dueDate 인자가 안 넘어오면, 로컬 브라우저 타임존 기준의 오늘 날짜(YYYY-MM-DD)를 기본값으로 사용합니다.
     const now = new Date();
     const year = now.getFullYear();
@@ -135,6 +151,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
             end_date: finalEnd,
             color: color ?? "blue",
             memo: memo?.trim() ? memo.trim() : null,
+            user_id: session.user.id,
           },
         ])
         .select();
@@ -251,12 +268,15 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // 웹이 켜지자마자 DB에서 데이터를 자동으로 긁어옴
+  // 로그인 세션이 준비되면 DB에서 데이터를 자동으로 긁어옴
   useEffect(() => {
+    if (!session?.user) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTodos();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCategories();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.user]);
 
   return (
     <TodoContext.Provider

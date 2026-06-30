@@ -2,16 +2,13 @@
 
 import type { NotificationRecord } from "../types/notification";
 
-function getStorageKey(): string {
-  // TODO: Auth 붙으면 실제 userId로 교체
-  // const { user } = useAuth();
-  // return `myflow:notifications:${user?.id ?? "guest"}`;
-  return "myflow:notifications:guest";
+function getStorageKey(userId: string): string {
+  return `myflow:notifications:${userId}`;
 }
 
-export function loadNotifications(): NotificationRecord[] {
+export function loadNotifications(userId: string): NotificationRecord[] {
   try {
-    const raw = localStorage.getItem(getStorageKey());
+    const raw = localStorage.getItem(getStorageKey(userId));
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
@@ -21,9 +18,12 @@ export function loadNotifications(): NotificationRecord[] {
   }
 }
 
-export function saveNotifications(records: NotificationRecord[]): void {
+export function saveNotifications(
+  userId: string,
+  records: NotificationRecord[],
+): void {
   try {
-    localStorage.setItem(getStorageKey(), JSON.stringify(records));
+    localStorage.setItem(getStorageKey(userId), JSON.stringify(records));
   } catch {
     // localStorage 용량 초과 등의 예외는 조용히 무시 (알림은 비핵심 기능)
   }

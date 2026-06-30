@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { NotificationContext } from "./NotificationContext";
 import { useTodos } from "../hooks/useTodos";
+import { useAuth } from "../hooks/useAuth";
 import { isTodoOnDate } from "../utils/todoDateRange";
 import { buildNotificationMessage } from "../utils/notificationMessages";
 import {
@@ -33,9 +34,10 @@ function isSlotPassed(slot: NotificationSlot, now: Date): boolean {
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const { todos, isLoading } = useTodos();
-  const [notifications, setNotifications] = useState<NotificationRecord[]>(() =>
-    pruneOldNotifications(loadNotifications()),
-  );
+  const { session } = useAuth();
+  const userId = session?.user?.id;
+
+  const [notifications, setNotifications] = useState<NotificationRecord[]>([]);
 
   const todosRef = useRef(todos);
   const notificationsRef = useRef(notifications);
@@ -48,8 +50,17 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     notificationsRef.current = notifications;
   }, [notifications]);
 
+  // userId가 준비되면 그 사용자의 저장된 알림을 불러옴
   useEffect(() => {
-    if (isLoading) return;
+    if (!userId) return;
+    const loaded = pruneOldNotifications(loadNotifications(userId));
+    notificationsRef.current = loaded;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNotifications(loaded);
+  }, [userId]);
+
+  useEffect(() => {
+    if (isLoading || !userId) return;
 
     function checkAndCreateMissingNotifications() {
       const now = new Date();
@@ -88,22 +99,23 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         const updated = pruneOldNotifications([...existing, ...newRecords]);
         notificationsRef.current = updated;
         setNotifications(updated);
-        saveNotifications(updated);
+        saveNotifications(userId!, updated);
       }
     }
 
     checkAndCreateMissingNotifications();
     const intervalId = setInterval(checkAndCreateMissingNotifications, 60_000);
     return () => clearInterval(intervalId);
-  }, [isLoading]);
+  }, [isLoading, userId]);
 
   const markAllAsSeen = () => {
+    if (!userId) return;
     const updated = notificationsRef.current.map((n) =>
       n.seen ? n : { ...n, seen: true },
     );
     notificationsRef.current = updated;
     setNotifications(updated);
-    saveNotifications(updated);
+    saveNotifications(userId, updated);
   };
 
   const unseenCount = notifications.filter((n) => !n.seen).length;
