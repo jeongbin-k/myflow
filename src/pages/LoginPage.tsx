@@ -50,9 +50,22 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleClick = () => {
-    // TODO: Google OAuth는 Google Cloud Console 설정 후 연결 예정
-    setInfoMsg("구글 로그인은 곧 지원될 예정이에요!");
+  const handleGoogleClick = async () => {
+    setErrorMsg(null);
+    setInfoMsg(null);
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+
+    if (error) {
+      setErrorMsg(translateAuthError(error.message));
+    }
+    // 성공 시: 구글 로그인 페이지로 자동 리디렉션됨
+    // 로그인 완료 후 redirectTo로 돌아오면 onAuthStateChange가 감지해서 자동으로 화면 전환
   };
 
   return (
@@ -124,41 +137,45 @@ export default function LoginPage() {
           </div>
 
           {/* 이메일/비밀번호 폼 */}
-          <div className="flex flex-col gap-3">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="이메일을 입력하세요"
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-indigo-300 transition-colors"
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="비밀번호를 입력하세요"
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-indigo-300 transition-colors"
-            />
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-3">
+              <input
+                type="email"
+                name="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="이메일을 입력하세요"
+                className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-indigo-300 transition-colors"
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호를 입력하세요"
+                className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-indigo-300 transition-colors"
+              />
 
-            {errorMsg && (
-              <p className="text-xs font-medium text-rose-500">{errorMsg}</p>
-            )}
-            {infoMsg && (
-              <p className="text-xs font-medium text-indigo-500">{infoMsg}</p>
-            )}
+              {errorMsg && (
+                <p className="text-xs font-medium text-rose-500">{errorMsg}</p>
+              )}
+              {infoMsg && (
+                <p className="text-xs font-medium text-indigo-500">{infoMsg}</p>
+              )}
 
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting || !email || !password}
-              className="w-full bg-indigo-600 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-1"
-            >
-              {isSubmitting
-                ? "처리 중..."
-                : mode === "login"
-                  ? "로그인"
-                  : "회원가입"}
-            </button>
-          </div>
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting || !email || !password}
+                className="w-full bg-indigo-600 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-1"
+              >
+                {isSubmitting
+                  ? "처리 중..."
+                  : mode === "login"
+                    ? "로그인"
+                    : "회원가입"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
