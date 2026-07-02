@@ -48,12 +48,25 @@ const menus = [
   { id: "calendar", label: "캘린더", icon: <IconCalendar size={20} /> },
 ];
 
+// 사이드바 접힘 상태 localStorage key
+const SIDEBAR_STORAGE_KEY = "myflow:sidebarOpen";
+
 export default function App() {
   const { session, isAuthLoading } = useAuth(); // ← 이걸로 교체
-
   const [currentMenu, setCurrentMenu] = useState("dashboard");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    const saved = localStorage.getItem(SIDEBAR_STORAGE_KEY);
+    return saved === null ? true : saved === "true";
+  });
   const { isModalOpen } = useTodos();
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => {
+      const next = !prev;
+      localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next));
+      return next;
+    });
+  };
 
   if (isAuthLoading) {
     return <div>로딩 중</div>;
@@ -76,7 +89,7 @@ export default function App() {
       >
         {/* 접기/펼치기 토글 버튼 */}
         <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          onClick={toggleSidebar}
           className="absolute -right-3 top-4.5 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center text-xs text-slate-500 hover:text-slate-800 hover:shadow-sm cursor-pointer z-50 transition-all"
         >
           {isSidebarOpen ? (
